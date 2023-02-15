@@ -30,21 +30,25 @@ This guide uses Centos 7. Please use your prefered search engine on other OS gui
 
     5. Run composer update
         $ composer update
+    
+    6. Copy example ENV file and to the project directory
+        $ cp .env.example .env
 
-    6. After composer update command is successfull run database migration command
+    7. Edit the .env file according to need
+
+    8. After composer update command is successfull run database migration command
         $ php artisan migrate
 
-    7. If you want default configuration please seed the database using below command.
+    9. If you want default configuration please seed the database using below command.
         $ php artisan db:seed --class=DefaultCredentials
 
         Note:   This seed some default configuration into the database like default users and some other things. 
             (Credentials are provided below)
 
-    8. Now we can serve our webpage please use below command to serve the webpage.
+    10. Now we can serve our webpage please use below command to serve the webpage.
         $ php artisan serve
-
-    OR
+        OR
         $ php artisan serve --host=XXX.XXX.XXX.XXX --port=XXXX
 
-    9. Please use `http://<host>:<port>` in your browser for visiting webpage.
-        Default address: `http://localhost:8000`
+    11. Please use `http://<host>:<port>` in your browser for visiting webpage.
+        Default address: http://localhost:8000
