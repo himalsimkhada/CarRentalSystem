@@ -11,7 +11,7 @@ Online Car Rental System is written in PHP but uses Laravel framework. It utiliz
 
 ## Packages
 
-    1. <>
+    1. PCOV
 
 ## Steps to install
 
