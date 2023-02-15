@@ -71,3 +71,9 @@ This guide uses Centos 7. Please use your prefered search engine on other OS gui
 
     9. Please use `http://<host>:<port>` in your browser for visiting webpage.
         Default address: `http://localhost:8000`
+
+
+
+```bash
+su - root
+```
