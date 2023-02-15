@@ -37,7 +37,7 @@ This guide uses Centos 7. Please use your prefered search engine on other OS gui
     7. If you want default configuration please seed the database using below command.
         $ php artisan db:seed --class=DefaultCredentials
 
-    > Note:   This seed some default configuration into the database like default users and some other things. 
+        Note:   This seed some default configuration into the database like default users and some other things. 
             (Credentials are provided below)
 
     8. Now we can serve our webpage please use below command to serve the webpage.
