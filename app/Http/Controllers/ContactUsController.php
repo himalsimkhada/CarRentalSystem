@@ -25,14 +25,14 @@ class ContactUsController extends Controller
     public function adminSupport()
     {
         $getMessages = ContactUs::orderBy('priority', 'DESC')->get();
-        
+
         return view('admin/message', ['messages' => $getMessages]);
     }
 
     public function companySupport()
     {
         $getMessages = ContactUs::where('type', '=', 'emr')->get();
-        
+
         return view('company/message', ['messages' => $getMessages]);
     }
 

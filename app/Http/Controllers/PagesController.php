@@ -34,7 +34,7 @@ class PagesController extends Controller
     {
         $booking_type = BookingType::all();
         $locations = Location::all();
-        
+
         $location = $request->input('picklocation');
         $pick_date = $request->input('picking-date');
         $drop_date = $request->input('dropping-date');
