@@ -10,36 +10,35 @@
             <div class="card">
                 <div class="card-body">
                     @if (auth()->user()->user_type == 2)
-                        Reservation Notifications
+                        Notifications
                         <br>
-                        @forelse($notificationsReserved as $notification)
-                            <div class="alert alert-primary" role="alert">
-                                [{{ $notification->created_at }}] User "{{ $notification->data['firstname'] }}
-                                {{ $notification->data['lastname'] }}"
-                                ({{ $notification->data['email'] }}) has just reserved a car.
-                                <a href="#" class="float-right mark-as-read" data-id="{{ $notification->id }}">
-                                    Mark as read
+                        @forelse($notifications as $notification)
+                            @if ($notification->type == 'App\Notifications\NewReservationNotificationCompany')
+                                <div class="alert alert-success" role="alert">
+                                    [{{ $notification->created_at }}] You
+                                    ({{ $notification->data['email'] }})
+                                    have successfully reserved a car.
+                                    <a href="#" class="float-right mark-as-read" data-id="{{ $notification->id }}">
+                                        Mark as read
+                                    </a>
+                                </div>
+                            @elseif ($notification->type == 'App\Notifications\NewPaymentNotificationCompany')
+                                <div class="alert alert-success" role="alert">
+                                    [{{ $notification->created_at }}] You
+                                    ({{ $notification->data['email'] }}) have successfully paid for the reserved car.
+                                    <a href="#" class="float-right mark-as-read" data-id="{{ $notification->id }}">
+                                        Mark as read
+                                    </a>
+                                </div>
+                            @endif
+                            @if ($loop->last)
+                                <a href="#" id="mark-all">
+                                    Mark all as read
                                 </a>
-                            </div>
+                            @endif
                         @empty
-                            There are no new reservation notifications
+                            There are no new notifications
                         @endforelse
-                        <hr>
-                        Payment Notifications
-                        <br>
-                        @forelse($notificationsPayment as $notification)
-                            <div class="alert alert-success" role="alert">
-                                [{{ $notification->created_at }}] User "{{ $notification->data['firstname'] }}
-                                {{ $notification->data['lastname'] }}"
-                                ({{ $notification->data['email'] }}) has paid for the reserved car.
-                                <a href="#" class="float-right mark-as-read" data-id="{{ $notification->id }}">
-                                    Mark as read
-                                </a>
-                            </div>
-                        @empty
-                            There are no new payment notifications
-                        @endforelse
-                        <hr>
                     @endif
                 </div>
             </div>
