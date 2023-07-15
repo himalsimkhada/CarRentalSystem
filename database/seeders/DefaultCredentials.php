@@ -6,7 +6,6 @@ use App\Models\BookingType;
 use App\Models\Car;
 use App\Models\CarCompany;
 use App\Models\Location;
-use App\Models\PartnerReq;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -21,10 +20,10 @@ class DefaultCredentials extends Seeder
     {
         $user_credentails = [
             [
-                'firstname' => 'admin-fname',
-                'lastname' => 'admin-lname',
-                'address' => 'admin-address',
-                'contact' => 'admin-contact',
+                'firstname' => 'Admin',
+                'lastname' => 'Admin',
+                'address' => 'Nepal',
+                'contact' => 'N/A',
                 'date_of_birth' => date("Y-m-d"),
                 'profile_photo' => '',
                 'username' => 'admin',
@@ -33,77 +32,29 @@ class DefaultCredentials extends Seeder
                 'password' => bcrypt('admin'),
             ],
             [
-                'firstname' => 'admin-fname',
-                'lastname' => 'admin-lname',
-                'address' => 'admin-address',
-                'contact' => 'admin-contact',
+                'firstname' => 'Owner',
+                'lastname' => 'Company1',
+                'address' => 'Nepal',
+                'contact' => 'N/A',
                 'date_of_birth' => date("Y-m-d"),
                 'profile_photo' => '',
-                'username' => 'admin',
-                'email' => 'testing@test.com',
-                'user_type' => '1',
-                'password' => bcrypt('admin'),
-            ],
-            [
-                'firstname' => 'owner-company1',
-                'lastname' => 'owner-company1',
-                'address' => 'owner-company1',
-                'contact' => 'owner-company1',
-                'date_of_birth' => date("Y-m-d"),
-                'profile_photo' => '',
-                'username' => 'ownercom1',
-                'email' => 'ownercom1@test.com',
+                'username' => 'company',
+                'email' => 'owner@test.com',
                 'user_type' => '2',
                 'password' => bcrypt('owner'),
             ],
             [
-                'firstname' => 'owner-company2',
-                'lastname' => 'owner-company2',
-                'address' => 'owner-company2',
-                'contact' => 'owner-company2',
-                'date_of_birth' => date("Y-m-d"),
-                'profile_photo' => '',
-                'username' => 'ownercom2',
-                'email' => 'ownercom2@test.com',
-                'user_type' => '2',
-                'password' => bcrypt('owner'),
-            ],
-            [
-                'firstname' => 'Himal',
-                'lastname' => 'Simkhada',
+                'firstname' => 'Normal',
+                'lastname' => 'User',
                 'address' => 'Thali',
                 'contact' => 'not-provided',
                 'date_of_birth' => date("Y-m-d"),
                 'profile_photo' => '',
-                'username' => 'himalsim',
-                'email' => 'himal@test.com',
+                'username' => 'user',
+                'email' => 'user@test.com',
                 'user_type' => '3',
                 'password' => bcrypt('user'),
-            ],
-            [
-                'firstname' => 'Saral',
-                'lastname' => 'Raut',
-                'address' => 'Balkot',
-                'contact' => 'not-provided',
-                'date_of_birth' => date("Y-m-d"),
-                'profile_photo' => '',
-                'username' => 'saralraut',
-                'email' => 'saral@test.com',
-                'user_type' => '3',
-                'password' => bcrypt('user'),
-            ],
-            [
-                'firstname' => 'Saral',
-                'lastname' => 'Raut',
-                'address' => 'Balkot',
-                'contact' => 'not-provided',
-                'date_of_birth' => date("Y-m-d"),
-                'profile_photo' => '',
-                'username' => 'saralraut123',
-                'email' => 'saral@testtest.com',
-                'user_type' => '3',
-                'password' => bcrypt('user'),
-            ],
+            ]
         ];
 
         foreach ($user_credentails as $key => $value) {
@@ -112,18 +63,18 @@ class DefaultCredentials extends Seeder
 
         $booking_types = [
             [
-                'name' => 'Luxurious',
-                'luggage_no' => 4,
-                'people_no' => 4,
-                'cost' => 100.00,
-                'late_fee' => 40.00,
-            ],
-            [
-                'name' => 'Supercar',
+                'name' => 'Luxurios',
                 'luggage_no' => 2,
                 'people_no' => 2,
                 'cost' => 200.00,
                 'late_fee' => 80.00,
+            ],
+            [
+                'name' => 'Delux',
+                'luggage_no' => 4,
+                'people_no' => 4,
+                'cost' => 100.00,
+                'late_fee' => 40.00,
             ],
             [
                 'name' => 'Normal',
@@ -155,16 +106,6 @@ class DefaultCredentials extends Seeder
                 'email' => 'company1@test.com',
                 'logo' => '',
                 'owner_id' => 3
-            ],
-            [
-                'name' => 'Company 2',
-                'description' => 'desc-company2',
-                'address' => 'Bhaktapur',
-                'contact' => 'contact-company2',
-                'registration_number' => '1122334456',
-                'email' => 'company2@test.com',
-                'logo' => '',
-                'owner_id' => 4
             ]
         ];
 
@@ -191,19 +132,19 @@ class DefaultCredentials extends Seeder
             ],
             [
                 'location' => 'Balkot',
-                'company_id' => 2
+                'company_id' => 1
             ],
             [
                 'location' => 'Suryabinayak',
-                'company_id' => 2
+                'company_id' => 1
             ],
             [
                 'location' => 'Dhulikhel',
-                'company_id' => 2
+                'company_id' => 1
             ],
             [
                 'location' => 'Sangha',
-                'company_id' => 2
+                'company_id' => 1
             ],
         ];
 
@@ -225,7 +166,7 @@ class DefaultCredentials extends Seeder
             ],
             [
                 'model' => 'Civic',
-                'description' => 'desc',
+                'description' => 'It\'s fuel efficient, stylish, and fun to drive, all traits that make the 2024 Honda Civic a winner in our book.',
                 'model_year' => 2010,
                 'brand' => 'Honda',
                 'color' => 'Silver',
@@ -236,18 +177,18 @@ class DefaultCredentials extends Seeder
             ],
             [
                 'model' => 'Creta',
-                'description' => 'desc',
+                'description' => 'The Hyundai Creta operates as a SUV and as such, it measures 4,300mm in length, 1,790mm in width, and 1,635mm in height.',
                 'model_year' => 2015,
                 'brand' => 'Hundyai',
                 'color' => 'Red',
                 'plate_number' => 'GSD 677',
                 'availability' => 1,
-                'company_id' => 2,
+                'company_id' => 1,
                 'booking_type_id' => 2,
             ],
             [
                 'model' => 'Santro',
-                'description' => 'desc',
+                'description' => 'The Santro is a 5 seater 4 cylinder car and has length of 3610 mm, width of 1645 mm and a wheelbase of 2400 mm.',
                 'model_year' => 2009,
                 'brand' => 'Hundyai',
                 'color' => 'Blue',
@@ -257,8 +198,8 @@ class DefaultCredentials extends Seeder
                 'booking_type_id' => 3,
             ],
             [
-                'model' => 'Maruti',
-                'description' => 'desc',
+                'model' => 'Alto 800',
+                'description' => 'The Alto 800 is a 4 seater 3 cylinder car and has length of 3445mm, width of 1515mm and a wheelbase of 2360mm.',
                 'model_year' => 2003,
                 'brand' => 'Suzuki',
                 'color' => 'White',
@@ -271,33 +212,6 @@ class DefaultCredentials extends Seeder
 
         foreach ($cars as $key => $value) {
             Car::create($value);
-        }
-
-        $data = [
-            [
-                'company_name' => 'testing',
-                'company_description' => 'test',
-                'company_address' => 'test',
-                'company_contact' => 'test',
-                'company_reg' => '1234',
-                'company_email' => 'test@email.com',
-                'user_id' => 7,
-                'approved' => 'waiting'
-            ],
-            [
-                'company_name' => 'testing',
-                'company_description' => 'test',
-                'company_address' => 'test',
-                'company_contact' => 'test',
-                'company_reg' => '4567',
-                'company_email' => 'test@test.com',
-                'user_id' => 7,
-                'approved' => 'waiting'
-            ],
-        ];
-
-        foreach ($data as $key => $value) {
-            PartnerReq::create($value);
         }
     }
 }
