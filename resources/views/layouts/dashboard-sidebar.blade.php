@@ -89,8 +89,8 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ asset('/images/company/profile_images/' . Auth::user()->company->logo) }}" alt=""
-                        class="img-fluid rounded-circle">
+                    <img src="{{ file_exists(asset('/images/company/profile_images/' . Auth::user()->company->logo)) ? asset('/images/company/profile_images/' . Auth::user()->company->logo) : asset('/images/company/profile_images/default.png') }}"
+                        alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ auth()->user()->company->name }}</p>
                     </p>
@@ -175,8 +175,8 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ asset('/images/profile_images/' . Auth::user()->profile_photo) }}" alt=""
-                        class="img-fluid rounded-circle">
+                    <img src="{{ file_exists(asset('/images/profile_images/' . Auth::user()->profile_photo)) ? asset('/images/profile_images/' . Auth::user()->profile_photo) : asset('/images/profile_images/default.png') }}"
+                        alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ Auth::user()->username }}</p>
                     </p>
@@ -206,7 +206,8 @@
                         </span></a>
                 </li>
                 <li>
-                    <a href="#profile" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Profile</a>
+                    <a href="#profile" data-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Profile</a>
                     <ul class="collapse list-unstyled" id="profile">
                         <li>
                             <a href="{{ route('user.profile.edit') }}">Edit Profile <span
@@ -254,5 +255,4 @@
             $(this).toggleClass('active');
         });
     });
-
 </script>

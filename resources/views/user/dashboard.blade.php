@@ -11,7 +11,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-3">
-                        <img src="{{ asset('/images/profile_images/' . $detail->profile_photo) }}" alt=""
+                        <img src="{{ file_exists(asset('/images/profile_images/' . $detail->profile_photo)) ? asset('/images/profile_images/' . $detail->profile_photo) : asset('/images/profile_images/default.png') }}" alt=""
                             class="img-thumbnail">
                         <small class="form-text text-muted">Profile Picture / Avatar</small>
                     </div>

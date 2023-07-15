@@ -11,3 +11,9 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/public/images/car/images/*
+!/public/images/car/images/default.png
+/public/images/company/profile_images/*
+!/public/images/company/profile_images/default.png
+/public/images/profile_images/*
+!/public/images/profile_images/default.png
