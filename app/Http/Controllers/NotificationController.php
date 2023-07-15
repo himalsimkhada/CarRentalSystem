@@ -19,13 +19,6 @@ class NotificationController extends Controller
 {
     public function notification()
     {
-        $notificationsRegistered = auth()->user()->unreadNotifications->whereIn('type', [NewUserRegisteredNotification::class]);
-        $notificationsReserved = auth()->user()->unreadNotifications->whereIn('type', [NewReservationNotification::class]);
-        $notificationsPayment = auth()->user()->unreadNotifications->whereIn('type', [PaymentNotification::class]);
-        $notificationsRequest = auth()->user()->unreadNotifications->whereIn('type', [NewPartnerReqNotification::class]);
-        $notificationsApproved = auth()->user()->unreadNotifications->whereIn('type', [NewPartnerApprovedNotification::class]);
-        $notificationsDenied = auth()->user()->unreadNotifications->whereIn('type', [NewPartnerReqDeniedNotification::class]);
-
         $allNotifications = auth()->user()->unreadNotifications;
 
         return view('admin.notifications', ['notifications' => $allNotifications]);
