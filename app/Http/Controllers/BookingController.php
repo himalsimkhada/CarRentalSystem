@@ -67,7 +67,7 @@ class BookingController extends Controller
             ];
             Booking::insert($values);
 
-            // Mail::to(auth()->user()->email)->send(new BookingMail($values));
+            Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
             event(new CarReserved($userData, $company, $car_id));
 
@@ -93,7 +93,7 @@ class BookingController extends Controller
                 ];
                 Booking::insert($values);
 
-                // Mail::to(auth()->user()->email)->send(new BookingMail($values));
+                Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
                 event(new CarReserved($userData, $company, $car_id));
 
@@ -182,7 +182,7 @@ class BookingController extends Controller
                 ];
                 Booking::insert($values);
 
-                // Mail::to(auth()->user()->email)->send(new BookingMail($values));
+                Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
                 event(new CarReserved($userData, $company, $car_id));
 

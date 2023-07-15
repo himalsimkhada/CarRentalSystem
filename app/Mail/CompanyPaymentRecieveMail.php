@@ -5,6 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class CompanyPaymentRecieveMail extends Mailable
@@ -13,6 +15,7 @@ class CompanyPaymentRecieveMail extends Mailable
 
     public $invoice;
     public $company;
+
     /**
      * Create a new message instance.
      *
@@ -25,12 +28,36 @@ class CompanyPaymentRecieveMail extends Mailable
     }
 
     /**
-     * Build the message.
+     * Get the message envelope.
      *
-     * @return $this
+     * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function build()
+    public function envelope()
     {
-        return $this->view('emails.companypaymentrecieve');
+        return new Envelope(
+            subject: 'Company Payment Recieve Mail',
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
+     */
+    public function content()
+    {
+        return new Content(
+            view: 'emails.companypaymentrecieve',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array
+     */
+    public function attachments()
+    {
+        return [];
     }
 }
