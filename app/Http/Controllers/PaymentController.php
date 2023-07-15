@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Models\Car;
 use App\Models\CarCompany;
 use App\Models\Invoice;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,6 +32,7 @@ class PaymentController extends Controller
         $company_id = Car::where('id', '=', $car_id)->first()->company_id;
 
         $company_detail = CarCompany::where('id', '=', $company_id)->first();
+        $company_owner_detail = User::where('id', $company_detail->owner_id)->first();
 
         $values = [
             'paypal_payer_id' => $request->input('paypal_payer_id'),
@@ -51,7 +53,7 @@ class PaymentController extends Controller
         ];
         Booking::where('id', '=', $booking_id)->update($booking_val);
 
-        event(new BookingPaid($userDetails, $company_detail, $car_id));
+        event(new BookingPaid($userDetails, $company_owner_detail, $car_id));
 
         Mail::to(auth()->user()->email)->send(new UserPaymentMail($values));
 

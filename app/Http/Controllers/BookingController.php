@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\Models\BookingType;
 use App\Models\Car;
 use App\Models\CarCompany;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -43,9 +44,10 @@ class BookingController extends Controller
 
         $car_id = $request->get('car-id');
 
-        $company_id = Car::where('id', '=', $car_id)->first()->company_id;
+        $company_id = Car::where('id', $car_id)->first()->company_id;
 
-        $company = CarCompany::where('id', '=', $company_id)->get();
+        $company = CarCompany::with('user')->where('id', $company_id)->first();
+        $company_owner = User::with('company')->where('id', $company->owner_id)->first();
 
         if (!$check_exists) {
             $change_availability = [
@@ -69,7 +71,7 @@ class BookingController extends Controller
 
             Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
-            event(new CarReserved($userData, $company, $car_id));
+            event(new CarReserved($userData, $company_owner, $car_id));
 
             return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
         } elseif ($check_exists) {
@@ -95,7 +97,7 @@ class BookingController extends Controller
 
                 Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
-                event(new CarReserved($userData, $company, $car_id));
+                event(new CarReserved($userData, $company_owner, $car_id));
 
                 return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
             } else {
@@ -134,7 +136,8 @@ class BookingController extends Controller
 
         $company_id = Car::where('id', '=', $car_id)->first()->company_id;
 
-        $company = CarCompany::where('id', '=', $company_id)->get();
+        $company = CarCompany::where('id', $company_id)->first();
+        $company_owner = User::with('company')->where('id', $company->owner_id)->first();
 
         if (!$check_exists) {
             $change_availability = [
@@ -158,7 +161,7 @@ class BookingController extends Controller
 
             Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
-            event(new CarReserved($userData, $company, $car_id));
+            event(new CarReserved($userData, $company_owner, $car_id));
 
             return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
         } elseif ($check_exists) {
@@ -184,7 +187,7 @@ class BookingController extends Controller
 
                 Mail::to(auth()->user()->email)->send(new BookingMail($values));
 
-                event(new CarReserved($userData, $company, $car_id));
+                event(new CarReserved($userData, $company_owner, $car_id));
 
                 return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
             } else {
