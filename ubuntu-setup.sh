@@ -2,7 +2,7 @@
 
 echo "Only run this script once at the time of installation"
 
-PACKAGES="php-cli php-pcov php-mysql php-curl composer"
+PACKAGES="php-cli php-pcov php-mysql php-curl composer phpunit"
 CONFIG_FILE=.env
 
 #Set configs
@@ -14,8 +14,8 @@ export DB_USERNAME=root
 export DB_PASSWORD=3Xtenso@123
 
 echo "Installing required packages."
-# sudo apt update
-# sudo apt install ${PACKAGES}
+sudo apt update
+sudo apt install ${PACKAGES}
 
 if [ ! -f ${CONFIG_FILE} ]; then
     echo "${CONFIG_FILE} doesnt exists"
@@ -23,6 +23,8 @@ if [ ! -f ${CONFIG_FILE} ]; then
     cp ./.env.example ./.env
 fi
 
-# php artisan migrate
-# php artisan db:seed --class=DefaultCredentials
+composer update
+
+php artisan migrate
+php artisan db:seed --class=DefaultCredentials
 php artisan serve

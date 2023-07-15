@@ -38,7 +38,7 @@ Auth::routes();
 
 //routes for global pages
 Route::get('/', [PagesController::class, 'index'])->name('index');
-Route::post('/listing', [PagesController::class, 'listing'])->name('listing');
+Route::get('/listing', [PagesController::class, 'listing'])->name('listing');
 Route::get('/car/lists', [PagesController::class, 'car_list'])->name('cars.list');
 Route::get('/car/detail', [CarController::class, 'getDetail'])->name('car.detail');
 Route::get('/car/category/{type_id}', [CarController::class, 'getCategory'])->name('car.category');

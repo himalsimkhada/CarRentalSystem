@@ -11,8 +11,7 @@
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img class="d-block w-100"
-                                    src="{{ asset('images/car/images/' . $detail->primary_image) }}" alt="">
+                                <img src="{{ file_exists(asset('images/car/images/' . $detail->primary_image)) ? asset('images/car/images/' . $detail->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
                             </div>
                             @foreach ($images as $image)
                                 <div class="carousel-item">
@@ -73,12 +72,12 @@
                                 <div class="form-group">
                                     <label>Pick Date</label>
                                     <input type="date" name="date" value="{{ Request::get('date') }}"
-                                        class="form-control" readonly>
+                                        class="form-control" min="{{ date('Y-m-d') }}">
                                 </div>
                                 <div class="form-group">
                                     <label>Drop Date</label>
                                     <input type="date" name="return-date" class="form-control"
-                                        value="{{ Request::get('return') }}" readonly>
+                                        value="{{ Request::get('return') }}">
                                 </div>
                                 <div class="form-group">
                                     <label>Booking Type</label>
@@ -89,7 +88,6 @@
                                     <label>Location</label>
                                     <input type="text" name="location" class="form-control"
                                         value="{{ Request::get('location') }}" readonly>
-                                    <small id="helpId" class="text-muted">Location</small>
                                 </div>
                             </div>
                             <div class="modal-footer">

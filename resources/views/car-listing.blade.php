@@ -41,8 +41,7 @@
                     @foreach ($pricedesc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ asset('images/car/images/' . $list->primary_image) }}" class="card-img-top"
-                                    alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -73,8 +72,7 @@
                     @foreach ($priceasc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ asset('images/car/images/' . $list->primary_image) }}" class="card-img-top"
-                                    alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -105,8 +103,7 @@
                     @forelse ($location as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ asset('images/car/images/' . $list->primary_image) }}" class="card-img-top"
-                                    alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -142,8 +139,7 @@
                     @foreach ($lists as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ asset('images/car/images/' . $list->primary_image) }}" class="card-img-top"
-                                    alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
