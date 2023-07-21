@@ -22,7 +22,7 @@
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.notification') }}">Notification<span
+                    <a href="{{ route('admin.notification') }}">Notification <span
                             class="badge badge-primary">{{ auth()->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-right">
                             notifications
@@ -35,13 +35,13 @@
                     <a href="#users" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Entities</a>
                     <ul class="collapse list-unstyled" id="users">
                         <li>
-                            <a href="{{ route('admin.car.list') }}">Cars<span
+                            <a href="{{ route('admin.index.car') }}">Cars<span
                                     class="material-icons align-middle float-right">
                                     directions_car
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.company.list') }}">Companies<span
+                            <a href="{{ route('admin.index.company') }}">Companies<span
                                     class="material-icons align-middle float-right">
                                     business
                                 </span></a>
@@ -53,7 +53,7 @@
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.booking.types') }}">Types<span
+                            <a href="{{ route('admin.list.type') }}">Types<span
                                     class="material-icons align-middle float-right">
                                     format_list_bulleted
                                 </span></a>
@@ -81,7 +81,7 @@
                 </ul>
             </ul>
         </div>
-    @elseif (Auth::user()->user_type == 2)
+    @elseif (auth()->guard('company')->check())
         <div class="bg-dark" id="sidebar-dashboard">
             <div class="sidebar-header">
                 <p class="text-uppercase text-center">Online Car Rental System</p>
@@ -89,10 +89,11 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ file_exists(asset('/images/company/profile_images/' . Auth::user()->company->logo)) ? asset('/images/company/profile_images/' . Auth::user()->company->logo) : asset('/images/company/profile_images/default.png') }}"
+                    <h1>{{ auth()->guard('company')->user()->logo }}</h1>
+                    <img src="{{ file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo)) ? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo) : asset('/images/company/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
-                    <p class="username">{{ auth()->user()->company->name }}</p>
+                    <p class="username">{{ auth()->guard('company')->user()->name }}</p>
                     </p>
                 </div>
                 <li>
@@ -108,8 +109,8 @@
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('company.notification') }}">Notification<span
-                            class="badge badge-primary">{{ auth()->user()->unreadNotifications()->count() }}</span><span
+                    <a href="{{ route('company.notification') }}">Notification <span
+                            class="badge badge-primary">{{ auth()->guard('company')->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-right">
                             notifications
                         </span></a>
@@ -118,7 +119,7 @@
                     <a href="{{ route('company.messages') }}">Messages</a>
                 </li>
                 <li>
-                    <a href="{{ route('company.car.list') }}">Cars<span
+                    <a href="{{ route('company.index.car') }}">Cars<span
                             class="material-icons align-middle float-right">
                             directions_car
                         </span></a>
@@ -133,19 +134,20 @@
                     <a href="#profile" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Profile</a>
                     <ul class="collapse list-unstyled" id="profile">
                         <li>
-                            <a href="{{ route('company.profile.edit') }}">Edit Company Details<span
-                                    class="material-icons align-middle float-right">
+                            <a
+                                href="{{ route('company.edit.profile', ['id' => Crypt::encrypt(auth()->guard('company')->user()->id)]) }}">Edit
+                                Company Details<span class="material-icons align-middle float-right">
                                     edit
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('company.credential') }}">Company Credentials<span
+                            <a href="{{ route('company.index.credential') }}">Company Credentials<span
                                     class="material-icons align-middle float-right">
                                     enhanced_encryption
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('company.locations') }}">Locations<span
+                            <a href="{{ route('company.index.location') }}">Locations<span
                                     class="material-icons align-middle float-right">
                                     location_on
                                 </span></a>
@@ -175,10 +177,10 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ file_exists(asset('/images/profile_images/' . Auth::user()->profile_photo)) ? asset('/images/profile_images/' . Auth::user()->profile_photo) : asset('/images/profile_images/default.png') }}"
+                    <img src="{{ file_exists(public_path('/images/profile_images/' . auth()->user()->profile_photo)) ? asset('/images/profile_images/' . auth()->user()->profile_photo) : asset('/images/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
-                    <p class="username">{{ Auth::user()->username }}</p>
+                    <p class="username">{{ auth()->user()->username }}</p>
                     </p>
                 </div>
                 <li>
@@ -193,7 +195,7 @@
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('user.notification') }}">Notification<span
+                    <a href="{{ route('user.notification') }}">Notification <span
                             class="badge badge-primary">{{ auth()->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-right">
                             notifications
@@ -210,13 +212,13 @@
                         class="dropdown-toggle">Profile</a>
                     <ul class="collapse list-unstyled" id="profile">
                         <li>
-                            <a href="{{ route('user.profile.edit') }}">Edit Profile <span
-                                    class="material-icons align-middle float-right">
+                            <a href="{{ route('user.edit.profile', ['id' => Crypt::encrypt(auth()->user()->id)]) }}">Edit
+                                Profile <span class="material-icons align-middle float-right">
                                     edit
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('user.credential') }}">Credentials <span
+                            <a href="{{ route('user.index.credential') }}">Credentials <span
                                     class="material-icons align-middle float-right">
                                     enhanced_encryption
                                 </span></a>

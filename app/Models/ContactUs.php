@@ -22,4 +22,9 @@ class ContactUs extends Model
         'user_id',
         'status',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class)->withDefault(); // Add `withDefault()` to handle null values
+    }
 }

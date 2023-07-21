@@ -16,6 +16,7 @@ class CreateCarImagesTable extends Migration
         Schema::create('car_images', function (Blueprint $table) {
             $table->increments('id');
             $table->string('image');
+            $table->timestamps();
         });
     }
 

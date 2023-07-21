@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CarCompany;
+use App\DataTables\CompanyCredentialsDataTable;
 use App\Models\CompanyCredential;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class CompanyCredentialController extends Controller
 {
@@ -13,13 +14,15 @@ class CompanyCredentialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(CompanyCredentialsDataTable $dataTable)
     {
-        $user_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $user_id)->first()->id;
+        return $dataTable->render('credential.index');
+    }
 
-        $credentials = CompanyCredential::where('company_id', '=', $company_id)->get();
-        return view('company.credential', ['credentials' => $credentials]);
+    public function create()
+    {
+        $credential = new CompanyCredential();
+        return view('credential.create-edit', compact('credential'));
     }
 
     /**
@@ -30,27 +33,26 @@ class CompanyCredentialController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $user_id)->first()->id;
-        if ($request->hasFile('credential_file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('credential_file')->isValid()) {
+        $company_id = auth()->guard('company')->user()->id;
+        if ($request->hasFile('file') && $request->hasFile('image')) {
+            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
                 $validate_file = $request->validate([
-                    'credential_file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192'
-                ]);        
+                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                    'image' => 'mimes:jpg,png,jpeg|max:8192',
+                ]);
 
-                $extension_file = $validate_file['credential_file']->extension();
-                $file = $validate_file['credential_file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'company_credentials');
+                $extension_file = $validate_file['file']->extension();
+                $file = $validate_file['file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'company_credentials');
 
                 $extension_image = $validate_file['image']->extension();
                 $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'company_credentials_images');
 
                 $values = [
-                    'credential_name' => $request->input('name'),
-                    'credential_file' => $file,
+                    'name' => $request->input('name'),
+                    'file' => $file,
                     'image' => $image,
-                    'credential_id' => $request->input('type_number'),
-                    'company_id' => $company_id
+                    'reg_number' => $request->input('reg_number'),
+                    'company_id' => $company_id,
                 ];
 
                 CompanyCredential::insert($values);
@@ -64,6 +66,12 @@ class CompanyCredentialController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $credential = CompanyCredential::where('id', $id)->first();
+        return view('credential.create-edit', compact('credential'));
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -73,38 +81,45 @@ class CompanyCredentialController extends Controller
      */
     public function update(Request $request)
     {
-        $user_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $user_id)->first()->id;
-        if ($request->hasFile('credential_file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('credential_file')->isValid()) {
+        $id = Crypt::decrypt($request->input('id'));
+        $company = auth()->guard('company')->user();
+        if ($request->hasFile('file') && $request->hasFile('image')) {
+            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
                 $validate_file = $request->validate([
-                    'credential_file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192'
+                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                    'image' => 'mimes:jpg,png,jpeg|max:8192',
                 ]);
 
-
-                $extension_file = $validate_file['credential_file']->extension();
-                $file = $validate_file['credential_file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'company_credentials');
+                $extension_file = $validate_file['file']->extension();
+                $file = $validate_file['file']->storeAs('/', $company->name . '_' . time() . '.' . $extension_file, 'company_credentials');
 
                 $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'company_credentials_images');
+                $image = $validate_file['image']->storeAs('/', $company->name . '_' . time() . '.' . $extension_image, 'company_credentials_images');
 
                 $values = [
-                    'credential_name' => $request->input('name'),
-                    'credential_file' => $file,
+                    'name' => $request->input('name'),
+                    'file' => $file,
                     'image' => $image,
-                    'credential_id' => $request->input('type_number'),
-                    'company_id' => $company_id
+                    'reg_number' => $request->input('reg_number'),
+                    'company_id' => $company->id,
                 ];
 
-                CompanyCredential::where('id', '=', $request->get('id'))->update($values);
+                CompanyCredential::where('id', $id)->update($values);
 
                 return redirect()->back()->with('alert', 'Successfull');
             } else {
                 return redirect()->back()->with('alert', 'Invalid file types');
             }
         } else {
-            return redirect()->back()->with('alert', 'Files not selected');
+            $values = [
+                'name' => $request->input('name'),
+                'reg_number' => $request->input('reg_number'),
+                'company_id' => $company->id,
+            ];
+
+            CompanyCredential::where('id', $id)->update($values);
+
+            return redirect()->back()->with('alert', 'Successfull');
         }
     }
 
@@ -116,12 +131,8 @@ class CompanyCredentialController extends Controller
      */
     public function destroy($id)
     {
-        $delete = CompanyCredential::where('id', '=', $id)->delete();
+        $response = CompanyCredential::where('id', '=', $id)->delete();
 
-        if ($delete = true) {
-            return redirect()->back()->with('alert', 'Deleted Successfully');
-        } else {
-            return redirect()->back()->with('alert', 'Delete failed');
-        }
+        return response()->json($response);
     }
 }

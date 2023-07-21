@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\BookingTypesDataTable;
 use App\Models\BookingType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class BookingTypeController extends Controller
 {
@@ -12,11 +14,18 @@ class BookingTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(BookingTypesDataTable $dataTable)
     {
-        $types = BookingType::all();
+        return $dataTable->render('booking_type.index');
+    }
 
-        return view('/admin/booking-type', ['types' => $types]);
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $type = new BookingType();
+        return view('booking_type.create-edit', compact('type'));
     }
 
     /**
@@ -40,12 +49,21 @@ class BookingTypeController extends Controller
             'luggage_no' => $request->input('luggage_no'),
             'people_no' => $request->input('people_no'),
             'cost' => $request->input('cost'),
-            'late_fee' => $request->input('late_fee')
+            'late_fee' => $request->input('late_fee'),
         ];
 
         BookingType::insert($values);
 
         return redirect()->back()->with('alert', 'Booking type added successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $type = BookingType::where('id', $id)->first();
+        return view('booking_type.create-edit', compact('type'));
     }
 
     /**
@@ -57,8 +75,9 @@ class BookingTypeController extends Controller
      */
     public function update(Request $request, BookingType $bookingType)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
+        $id = Crypt::decrypt($request->get('id'));
+        $request->validate([
+            'name' => 'required|unique:booking_types,name,' . $id,
             'luggage_no' => 'required|integer',
             'people_no' => 'required|integer',
             'cost' => 'required',
@@ -70,10 +89,10 @@ class BookingTypeController extends Controller
             'luggage_no' => $request->input('luggage_no'),
             'people_no' => $request->input('people_no'),
             'cost' => $request->input('cost'),
-            'late_fee' => $request->input('late_fee')
+            'late_fee' => $request->input('late_fee'),
         ];
 
-        BookingType::where('id', '=', $request->get('id'))->update($values);
+        $bookingType->where('id', $id)->update($values);
 
         return redirect()->back()->with('alert', 'Booking type successfully edited.');
     }
@@ -86,8 +105,9 @@ class BookingTypeController extends Controller
      */
     public function destroy(BookingType $bookingType, $id)
     {
-        $bookingType->where('id', '=', $id)->delete();
+        $response = $bookingType->where('id', $id)->delete();
 
-        return redirect()->back()->with('alert', 'Booking type successfully deleted.');
+        // return redirect()->back()->with('alert', 'Booking type successfully deleted.');
+        return response()->json($response);
     }
 }

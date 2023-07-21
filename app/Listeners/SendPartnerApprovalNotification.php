@@ -6,8 +6,6 @@ use App\Events\ReqApproved;
 use App\Models\User;
 use App\Notifications\NewPartnerApprovedNotification;
 use App\Notifications\NewRequestApprovedNotificationUser;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
 class SendPartnerApprovalNotification

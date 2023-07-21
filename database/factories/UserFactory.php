@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'email' => $this->faker->email,
             'password' => $this->faker->password,
             'username' => $this->faker->userName,
-            'user_type' => 3
-        ]; 
+            'user_type' => rand(1,3)
+        ];
     }
 }

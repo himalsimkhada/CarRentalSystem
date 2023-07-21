@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row m-0">
-                        @foreach ($reservations as $reservation)
+                        @forelse ($reservations as $reservation)
                             <div class="col-12 card">
                                 <div class="card-header">
                                     <div class="row">
@@ -43,7 +43,9 @@
                                     Reservation date: {{ $reservation->date }}
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            There are no reservations
+                        @endforelse
                     </div>
                 </div>
             </div>

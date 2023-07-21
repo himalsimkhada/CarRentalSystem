@@ -2,17 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Notifications\NewPartnerApprovedNotification;
-use App\Notifications\NewPartnerReqDeniedNotification;
-use App\Notifications\NewPartnerReqNotification;
-use App\Notifications\NewPartnerRequestNotificationUser;
-use App\Notifications\NewPaymentNotificationCompany;
-use App\Notifications\NewPaymentNotificationCurUser;
-use App\Notifications\NewRequestApprovedNotificationUser;
-use App\Notifications\NewRequestDeniedNotificationUser;
-use App\Notifications\NewReservationNotification;
-use App\Notifications\NewUserRegisteredNotification;
-use App\Notifications\PaymentNotification;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -26,7 +15,7 @@ class NotificationController extends Controller
 
     public function companyNotifications()
     {
-        $allNotifications = auth()->user()->unreadNotifications;
+        $allNotifications = auth()->guard('company')->user()->unreadNotifications;
 
         return view('company.notifications', ['notifications' => $allNotifications]);
     }

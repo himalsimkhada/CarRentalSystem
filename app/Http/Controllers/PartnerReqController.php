@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Events\PartnerRequest;
 use App\Events\ReqApproved;
 use App\Events\ReqDenied;
-use App\Mail\BookingMail;
 use App\Mail\PartnerCompany;
-use App\Models\CarCompany;
+use App\Models\Company;
 use App\Models\PartnerReq;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -65,7 +64,7 @@ class PartnerReqController extends Controller
 
             event(new ReqApproved($user));
 
-            CarCompany::insert($values);
+            Company::insert($values);
         }
 
         return redirect()->route('admin.requests')->with('alert', 'Request approved.');

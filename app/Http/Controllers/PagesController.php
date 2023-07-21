@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class PagesController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $data = BookingType::all();
         $locations = Location::all();

@@ -20,6 +20,6 @@ class Location extends Model
 
     public function company()
     {
-        return $this->belongsTo(CarCompany::class, 'company_id');
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

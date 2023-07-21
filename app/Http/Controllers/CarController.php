@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\CarsDataTable;
 use App\Models\BookingType;
 use App\Models\Car;
-use App\Models\CarCompany;
 use App\Models\CarImage;
+use App\Models\Company;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
 
@@ -18,6 +20,10 @@ class CarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index(CarsDataTable $dataTable)
+    {
+        return $dataTable->render('car.index');
+    }
 
     public function getDetail(Request $request)
     {
@@ -67,7 +73,6 @@ class CarController extends Controller
             ->where('booking_types.id', '=', $id)
             ->get();
 
-
         return view('car-list-category', ['lists' => $getcars, 'pricedesc' => $srtpricedesc, 'priceasc' => $srtpriceasc, 'location' => $searchLoc]);
     }
 
@@ -78,16 +83,13 @@ class CarController extends Controller
         return view('company.add-car', ['lists' => $list]);
     }
 
-    public function editCar(Request $request)
+    public function create()
     {
-        $get_id = $request->get('edit-id');
+        $car = new Car();
+        $car->load('type');
+        $types = BookingType::all();
 
-        $cars = Car::with('type')->where('id', '=', $get_id)->get();
-
-        $displayCompany = Car::with('company')->get();
-        $displayType = BookingType::all();
-
-        return view('/edit/car', ['cars' => $cars, 'companies' => $displayCompany, 'types' => $displayType]);
+        return view('car.create-edit', ['car' => $car, 'types' => $types]);
     }
 
     /**
@@ -98,13 +100,10 @@ class CarController extends Controller
      */
     public function store(Request $request)
     {
-        $owner_id = auth()->user()->id;
-        $availability = '';
-
-        if ($request->input('availability') == 'on') {
-            $availability = 1;
-        } else {
+        if ($request->input('availability') == null) {
             $availability = 0;
+        } else {
+            $availability = 1;
         }
 
         $getImage = $request->file('primary_image');
@@ -121,8 +120,9 @@ class CarController extends Controller
             'color' => 'required|string',
             'plate_number' => 'required|string|unique:cars',
             'primary_image' => 'required|image',
+            'booking_type_id' => 'required',
         ]);
-        $company_id = CarCompany::where('owner_id', '=', $owner_id)->first()->id;
+        $company_id = auth()->guard('company')->user()->id;
 
         $values = [
             'model' => $request->input('model'),
@@ -134,12 +134,21 @@ class CarController extends Controller
             'availability' => $availability,
             'primary_image' => $filename,
             'company_id' => $company_id,
-            'booking_type_id' => $request->input('booking_type_id')
+            'booking_type_id' => $request->input('booking_type_id'),
         ];
 
         Car::insert($values);
 
         return redirect()->back()->with('alert', 'Car successfully added.');
+    }
+
+    public function edit($id)
+    {
+        $id = Crypt::decrypt($id);
+        $car = Car::with('type')->where('id', '=', $id)->first();
+        $types = BookingType::all();
+
+        return view('car.create-edit', ['car' => $car, 'types' => $types]);
     }
 
     /**
@@ -148,34 +157,25 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function update(Request $request)
     {
-        $id = $request->get('car-id');
-        $car = Car::where('id', '=', $id)->first();
-        $owner_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $owner_id)->first()->id;
-        $availability = '';
+        $id = Crypt::decrypt($request->input('id'));
+        $company_id = auth()->guard('company')->user()->id;
 
-        if ($request->input('availability') == 'on') {
-            $availability = 1;
-        } else {
+        if ($request->input('availability') == null) {
             $availability = 0;
+        } else {
+            $availability = 1;
         }
-
-        $getImage = $request->file('primary_image');
-        $extension = $getImage->extension();
-        $img = Image::make($getImage)->fit(250);
-        $path = public_path('images/car/images');
-        $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $img->save($path . '/' . $filename);
+        $getImg = $request->file('primary_image');
 
         $validatedData = $request->validate([
             'model' => 'required|string',
             'model_year' => 'required',
             'brand' => 'required|string',
             'color' => 'required|string',
-            'plate_number' => 'required|string|' . Rule::unique('cars')->ignore($car->id),
-            'primary_image' => 'required|image',
+            'plate_number' => 'required|string|' . Rule::unique('cars')->ignore($id),
+            'booking_type_id' => 'required|' . Rule::unique('cars')->ignore($id),
         ]);
 
         $values = [
@@ -186,10 +186,21 @@ class CarController extends Controller
             'color' => $request->input('color'),
             'plate_number' => $request->input('plate_number'),
             'availability' => $availability,
-            'primary_image' => $filename,
             'company_id' => $company_id,
-            'booking_type_id' => $request->input('bookingtype_id'),
+            'booking_type_id' => $request->input('booking_type_id'),
         ];
+
+        if ($getImg) {
+            $extension = $getImg->extension();
+            $img = Image::make($getImg)->fit(250);
+            $path = public_path('images/car/images');
+            $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
+            $img->save($path . '/' . $filename);
+
+            $values = ['primary_image' => $filename];
+
+            Car::where('id', '=', $id)->update($values);
+        }
 
         Car::where('id', '=', $id)->update($values);
 
@@ -204,8 +215,9 @@ class CarController extends Controller
      */
     public function destroy(Car $car, $id)
     {
-        $car->where('id', '=', $id)->delete();
+        $response = $car->where('id', $id)->delete();
 
-        return redirect()->back()->with('alert', 'Car successfully deleted.');
+        // return redirect()->back()->with('alert', 'Car successfully deleted.');
+        return response()->json($response);
     }
 }

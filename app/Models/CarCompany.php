@@ -27,7 +27,7 @@ class CarCompany extends Model
 
     public function car()
     {
-        return $this->hasMany(Car::class);
+        return $this->hasMany(Car::class, 'company_id');
     }
 
     public function user()
@@ -35,12 +35,12 @@ class CarCompany extends Model
         return $this->belongsTo(User::class, 'id');
     }
 
-    public function location()
+    public function locations()
     {
-        return $this->hasMany(Location::class);
+        return $this->hasMany(Location::class, 'company_id');
     }
-    public function credential()
+    public function credentials()
     {
-        return $this->hasOne(CompanyCredential::class);
+        return $this->hasMany(CompanyCredential::class, 'company_id');
     }
 }

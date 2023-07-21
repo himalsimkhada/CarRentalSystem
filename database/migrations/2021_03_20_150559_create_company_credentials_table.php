@@ -15,10 +15,11 @@ class CreateCompanyCredentialsTable extends Migration
     {
         Schema::create('company_credentials', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('credential_name');
-            $table->string('credential_id');
-            $table->string('credential_file');
+            $table->string('name');
+            $table->string('reg_number');
+            $table->string('file');
             $table->string('image')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -21,6 +21,7 @@ class CreateBookingTypesTable extends Migration
             $table->double('cost');
             $table->integer('late_fee');
             $table->integer('count_reservation')->nullable();
+            $table->timestamps();
         });
     }
 

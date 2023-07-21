@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\ContactUsDataTable;
 use App\Models\ContactUs;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 
 class ContactUsController extends Controller
 {
@@ -22,28 +22,32 @@ class ContactUsController extends Controller
         return view('contact-us', ['details' => $detail]);
     }
 
-    public function adminSupport()
+    public function adminSupport(ContactUsDataTable $dataTable)
     {
-        $getMessages = ContactUs::orderBy('priority', 'DESC')->get();
-
-        return view('admin/message', ['messages' => $getMessages]);
+        return $dataTable->render('admin.message');
     }
 
-    public function companySupport()
-    {
-        $getMessages = ContactUs::where('type', '=', 'emr')->get();
+    // public function companySupport()
+    // {
+    //     $getMessages = ContactUs::where('type', '=', 'emr')->get();
 
-        return view('company/message', ['messages' => $getMessages]);
+    //     return view('company/message', ['messages' => $getMessages]);
+    // }
+
+    public function companySupport(ContactUsDataTable $dataTable)
+    {
+        return $dataTable->render('company.message');
     }
 
     public function emailCustomer(Request $request, $id, $user_id)
     {
-        $email_message = $request->input('email_message');
+        $email_message = $request->input('result');
+        // dd($email_message);
 
-        $this->user_detail = User::where('id', '=', $user_id)->first();
+        $user_detail = User::where('id', '=', $user_id)->first();
 
-        Mail::raw($email_message, function ($message) {
-            $message->to($this->user_detail->email, $this->user_detail->username);
+        Mail::raw($email_message, function ($message) use ($user_detail) {
+            $message->to($user_detail->email, $user_detail->username);
             $message->subject('Emergency Vehicle Replacement');
             $message->priority(3);
         });

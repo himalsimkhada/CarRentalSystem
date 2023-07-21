@@ -18,15 +18,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 
-        'password',    
-        'firstname', 
-        'lastname',      
-        'address', 
-        'contact', 
-        'date_of_birth', 
-        'profile_photo', 
-        'username', 
+        'email',
+        'password',
+        'firstname',
+        'lastname',
+        'address',
+        'contact',
+        'date_of_birth',
+        'profile_photo',
+        'username',
         'user_type',
     ];
 
@@ -62,7 +62,7 @@ class User extends Authenticatable
 
     public function company()
     {
-        return $this->hasOne(CarCompany::class, 'owner_id');
+        return $this->hasOne(Company::class, 'owner_id');
     }
 
     public function books()
@@ -78,5 +78,13 @@ class User extends Authenticatable
     public function review()
     {
         return $this->hasMany(CarReview::class);
+    }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        $filename = $this->profile_photo;
+        $url = asset('public/images/profile_images' . $filename);
+
+        return $url;
     }
 }

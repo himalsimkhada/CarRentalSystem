@@ -2,7 +2,7 @@
 
 echo "Only run this script once at the time of installation"
 
-PACKAGES="php-cli php-pcov php-mysql php-curl composer phpunit"
+PACKAGES="php-cli php-pcov php-mysql php-curl composer phpunit php-zip wkhtmltopdf php-gd"
 CONFIG_FILE=.env
 
 #Set configs

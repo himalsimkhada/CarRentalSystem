@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CarCompany;
+use App\DataTables\LocationsDataTable;
 use App\Models\Location;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class LocationController extends Controller
 {
@@ -13,13 +15,15 @@ class LocationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $owner_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $owner_id)->first()->id;
-        $locations = Location::where('company_id', '=', $company_id)->get();
+    public function index(LocationsDataTable $dataTable) {
+        return $dataTable->render('location.index');
+    }
 
-        return view('/company/location', ['displays' => $locations]);
+    public function create()
+    {
+        $location = new Location();
+
+        return view('location.create-edit', compact('location'));
     }
 
     /**
@@ -30,11 +34,10 @@ class LocationController extends Controller
      */
     public function store(Request $request, Location $location)
     {
-        $owner_id = auth()->user()->id;
-        $company_id = CarCompany::where('owner_id', '=', $owner_id)->first()->id;
+        $company_id = auth()->guard('company')->user()->id;
 
         $validatedData = $request->validate([
-            'location' => 'required|string',
+            'location' => 'required|string|unique:locations',
         ]);
 
         $values = [
@@ -46,6 +49,13 @@ class LocationController extends Controller
         return redirect()->back()->with('alert', 'Added successfully');
     }
 
+    public function edit($id)
+    {
+        $location = Location::where('id', $id)->first();
+
+        return view('location.create-edit', compact('location'));
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -53,15 +63,16 @@ class LocationController extends Controller
      * @param  \App\Models\Location  $location
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Location $location, $id)
+    public function update(Request $request, Location $location)
     {
+        $id = Crypt::decrypt($request->input('id'));
         $validatedData = $request->validate([
-            'location' => 'required|string',
+            'location' => 'required|string||' . Rule::unique('locations')->ignore($id),
         ]);
         $values = [
             'location' => $request->input('location')
         ];
-        $location->where('id', '=', $id)->update($values);
+        $location->where('id', $id)->update($values);
 
         return redirect()->back()->with('alert', 'Updated successfully.');
     }
@@ -74,8 +85,8 @@ class LocationController extends Controller
      */
     public function destroy(Location $location, $id)
     {
-        $location->where('id', '=', $id)->delete();
+        $response = $location->where('id', '=', $id)->delete();
 
-        return redirect()->back()->with('alert', 'Deleted successfully');
+        return response()->json($response);
     }
 }

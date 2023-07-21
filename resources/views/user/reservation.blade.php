@@ -25,7 +25,7 @@
                             src="https://www.paypal.com/sdk/js?client-id=ARIFgwem49nzCY-yr3Sg1zgtWXLX0FjwcaiCVeY6q4rsBNGiInQX5UA8VY2yalAvP239a72phmvYh05B">
                         </script>
                         @if (\Route::current()->getName() == 'user.reservation.paid.srt')
-                            @foreach ($srtPaid as $reservation)
+                            @forelse ($srtPaid as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -73,9 +73,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @elseif (\Route::current()->getName() == 'user.reservation.unpaid.srt')
-                            @foreach ($srtUnpaid as $reservation)
+                            @forelse ($srtUnpaid as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -281,7 +283,6 @@
                                                     }
                                                 }).render('#paypal{{ $reservation->booking_id }}');
                                                 /* //This function displays Smart Payment Buttons on your web page. */
-
                                             </script>
                                         @else
                                             <div class="float-right d-inline-block">
@@ -291,9 +292,11 @@
                                         @endif
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @else
-                            @foreach ($reservations as $reservation)
+                            @forelse ($reservations as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -501,7 +504,6 @@
                                                     }
                                                 }).render('#paypal{{ $reservation->booking_id }}');
                                                 /* //This function displays Smart Payment Buttons on your web page. */
-
                                             </script>
                                         @else
                                             <div class="float-right d-inline-block">
@@ -511,7 +513,9 @@
                                         @endif
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @endif
                     </div>
                 </div>

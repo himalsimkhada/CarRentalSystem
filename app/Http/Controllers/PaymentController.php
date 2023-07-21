@@ -7,7 +7,7 @@ use App\Mail\CompanyPaymentRecieveMail;
 use App\Mail\UserPaymentMail;
 use App\Models\Booking;
 use App\Models\Car;
-use App\Models\CarCompany;
+use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,7 +31,7 @@ class PaymentController extends Controller
 
         $company_id = Car::where('id', '=', $car_id)->first()->company_id;
 
-        $company_detail = CarCompany::where('id', '=', $company_id)->first();
+        $company_detail = Company::where('id', '=', $company_id)->first();
         $company_owner_detail = User::where('id', $company_detail->owner_id)->first();
 
         $values = [

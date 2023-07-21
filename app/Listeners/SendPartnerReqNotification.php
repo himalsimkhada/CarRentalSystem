@@ -6,8 +6,6 @@ use App\Events\PartnerRequest;
 use App\Models\User;
 use App\Notifications\NewPartnerReqNotification;
 use App\Notifications\NewPartnerRequestNotificationUser;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
 class SendPartnerReqNotification

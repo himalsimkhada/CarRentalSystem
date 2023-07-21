@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\BookingType;
 use App\Models\Car;
-use App\Models\CarCompany;
+use App\Models\Company;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -30,18 +30,6 @@ class DefaultCredentials extends Seeder
                 'email' => 'admin@test.com',
                 'user_type' => '1',
                 'password' => bcrypt('admin'),
-            ],
-            [
-                'firstname' => 'Owner',
-                'lastname' => 'Company1',
-                'address' => 'Nepal',
-                'contact' => 'N/A',
-                'date_of_birth' => date("Y-m-d"),
-                'profile_photo' => '',
-                'username' => 'company',
-                'email' => 'owner@test.com',
-                'user_type' => '2',
-                'password' => bcrypt('owner'),
             ],
             [
                 'firstname' => 'Normal',
@@ -103,47 +91,47 @@ class DefaultCredentials extends Seeder
                 'address' => 'Kathmandu',
                 'contact' => 'contact-company1',
                 'registration_number' => '1122334455',
-                'email' => 'company1@test.com',
+                'email' => 'company@test.com',
+                'password' => bcrypt('company'),
                 'logo' => '',
-                'owner_id' => 3
             ]
         ];
 
         foreach ($company_credentials as $key => $value) {
-            CarCompany::create($value);
+            Company::create($value);
         }
 
         $locations = [
             [
-                'location' => 'Ratnapark',
+                'name' => 'Ratnapark',
                 'company_id' => 1
             ],
             [
-                'location' => 'Gokarna',
+                'name' => 'Gokarna',
                 'company_id' => 1
             ],
             [
-                'location' => 'Balaju',
+                'name' => 'Balaju',
                 'company_id' => 1
             ],
             [
-                'location' => 'Sankhu',
+                'name' => 'Sankhu',
                 'company_id' => 1
             ],
             [
-                'location' => 'Balkot',
+                'name' => 'Balkot',
                 'company_id' => 1
             ],
             [
-                'location' => 'Suryabinayak',
+                'name' => 'Suryabinayak',
                 'company_id' => 1
             ],
             [
-                'location' => 'Dhulikhel',
+                'name' => 'Dhulikhel',
                 'company_id' => 1
             ],
             [
-                'location' => 'Sangha',
+                'name' => 'Sangha',
                 'company_id' => 1
             ],
         ];
@@ -155,7 +143,7 @@ class DefaultCredentials extends Seeder
         $cars = [
             [
                 'model' => 'R8',
-                'description' => 'The Audi R8 is a mid-engine, 2-seater sports car, which uses Audis trademark quattro permanent all-wheel drive system. It was introduced by the German car manufacturer Audi AG in 2006.',
+                'description' => 'The Audi R8 is a mid-engine, 2-seater sports car, which uses Audis trademark quattro permanent all-wheel drive system.',
                 'model_year' => 2006,
                 'brand' => 'Audi',
                 'color' => 'Black',

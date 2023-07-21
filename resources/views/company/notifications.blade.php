@@ -9,7 +9,7 @@
             <p class="text-center title">NOTIFICATIONS</p>
             <div class="card">
                 <div class="card-body">
-                    @if (auth()->user()->user_type == 2)
+                    @if (auth()->guard('company')->check())
                         Notifications
                         <br>
                         @forelse($notifications as $notification)

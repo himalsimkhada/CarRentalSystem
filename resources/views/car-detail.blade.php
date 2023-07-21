@@ -11,7 +11,8 @@
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="{{ file_exists(asset('images/car/images/' . $detail->primary_image)) ? asset('images/car/images/' . $detail->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $detail->primary_image)) ? asset('images/car/images/' . $detail->primary_image) : asset('images/car/images/default.png') }}"
+                                    class="card-img-top" alt="...">
                             </div>
                             @foreach ($images as $image)
                                 <div class="carousel-item">
@@ -47,9 +48,11 @@
                                 </ul>
                                 <p class="pricing">Cost (Per Day): ${{ $detail->type->cost }}</p>
                                 <div class="booking">
-                                    <button type="button" class="btn btn-success form-control text-left" data-toggle="modal"
-                                        data-target="#bookingDialouge">Book<i class="fas fa-car float-right align-middle"
-                                            style="font-size: 25px"></i></button>
+                                    <button type="button" class="btn btn-success form-control text-left"
+                                        data-toggle="modal" data-target="#bookingDialouge">Book<span
+                                            class="material-icons float-right align-middle">
+                                            payments
+                                        </span></button>
                                 </div>
                             </div>
                         </div>

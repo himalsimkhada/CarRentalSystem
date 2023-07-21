@@ -38,7 +38,6 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        // $this->redirectTo = url()->previous();
         $this->middleware('guest')->except('logout');
     }
 
@@ -54,10 +53,8 @@ class LoginController extends Controller
         if (Auth::attempt(array('email' => $input['email'], 'password' => $input['password']))) {
             if (auth()->user()->user_type == 1) {
                 return redirect()->route('admin.dashboard');
-            } elseif (auth()->user()->user_type == 2) {
-                return redirect()->route('company.dashboard');
             } elseif (auth()->user()->user_type == 3) {
-                return redirect()->back();
+                return redirect()->route('user.dashboard');
             }
         } else {
             return redirect()->route('login')

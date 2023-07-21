@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UsersDataTable;
 use App\Models\Booking;
 use App\Models\User;
 use App\Models\UserCredential;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
@@ -17,15 +19,19 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UsersDataTable $dataTable)
     {
-        $user = auth()->user()->id;
+        return $dataTable->render('user.index');
+    }
+    public function dashboard()
+    {
+        $id = auth()->user()->id;
 
-        $details = User::with('credentials')->where('id', '=', $user)->get();
+        $user = User::with('credentials')->where('id', $id)->first();
 
-        $credentials = UserCredential::with('user')->where('user_id', '=', $user)->get();
+        $credentials = UserCredential::with('user')->where('user_id', $id)->get();
 
-        return view('/user/dashboard', ['user_detail' => $details, 'credentials' => $credentials]);
+        return view('/user/dashboard', ['user' => $user, 'credentials' => $credentials]);
     }
 
     public function reservation()
@@ -64,13 +70,11 @@ class UserController extends Controller
         return view('/user/reservation', ['reservations' => $reservation_details, 'srtUnpaid' => $srtUnpaid, 'srtPaid' => $srtPaid]);
     }
 
-    public function editProfile()
+    public function edit($id)
     {
-        $user_id = auth()->user()->id;
+        $user = User::where('id', Crypt::decrypt($id))->first();
 
-        $user_details = User::where('id', '=', $user_id)->get();
-
-        return view('/edit/edit-profile', ['details' => $user_details]);
+        return view('user.create-edit', ['user' => $user]);
     }
 
     /**
@@ -82,9 +86,9 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        $id = auth()->user()->id;
+        $id = Crypt::decrypt(request()->get('id'));
 
-        $validatedData = $request->validate([
+        $validation = $request->validate([
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'address' => 'required|string',
@@ -97,21 +101,21 @@ class UserController extends Controller
             'lastname' => $request->input('lastname'),
             'address' => $request->input('address'),
             'contact' => $request->input('contact'),
-            'username' => $request->input('username')
+            'username' => $request->input('username'),
         ];
-        User::where('id', '=', $id)->update($values);
+        User::where('id', $id)->update($values);
 
         return redirect()->back()->with('alert', 'Edited successfully.');
     }
 
     public function updatePicture(Request $request)
     {
-        $id = auth()->user()->id;
+        $id = Crypt::decrypt($request->input('id'));
 
         $getprofile = $request->file('profile_photo');
         $extension = $getprofile->extension();
         $img = Image::make($getprofile)->fit(250);
-        $path = public_path('images\profile_images');
+        $path = public_path('images/profile_images');
         $filename = auth()->user()->username . '_' . time() . '.' . $extension;
         $img->save($path . '/' . $filename);
 
@@ -120,7 +124,7 @@ class UserController extends Controller
         ]);
 
         $values = [
-            'profile_photo' => $filename
+            'profile_photo' => $filename,
         ];
         User::where('id', '=', $id)->update($values);
 
@@ -135,7 +139,7 @@ class UserController extends Controller
                 'password' => 'required|string|min:8',
             ]);
             $values = [
-                'password' => Hash::make($request->input('password'))
+                'password' => Hash::make($request->input('password')),
             ];
             User::where('id', '=', $id)->update($values);
 
@@ -153,8 +157,9 @@ class UserController extends Controller
      */
     public function destroy(User $user, $id)
     {
-        $user->where('id', '=', $id)->delete();
+        $response = $user->where('id', $id)->delete();
 
-        return redirect()->back()->with('alert', 'User deleted successfully.');
+        // return redirect()->back()->with('alert', 'User deleted successfully.');
+        return response()->json($response);
     }
 }

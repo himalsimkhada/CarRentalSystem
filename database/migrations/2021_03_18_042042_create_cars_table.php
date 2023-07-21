@@ -23,6 +23,7 @@ class CreateCarsTable extends Migration
             $table->string('primary_image');
             $table->string('plate_number');
             $table->integer('availability')->length(4);
+            $table->timestamps();
         });
     }
 

@@ -17,7 +17,7 @@ class ForegnKeyCar extends Migration
             $table->integer('company_id')->unsigned();
             $table->foreign('company_id')->references('id')->on('companies');
             $table->integer('booking_type_id')->unsigned();
-            $table->foreign('booking_type_id')->references('id')->on('booking_types');
+            // $table->foreign('booking_type_id')->references('id')->on('booking_types');
         });
     }
 

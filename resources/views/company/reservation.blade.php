@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <div class="row m-0">
                         @if (\Route::current()->getName() == 'company.list.reservations.paid')
-                            @foreach ($srtPaid as $reservation)
+                            @forelse ($srtPaid as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -67,9 +67,11 @@
                                         Reservation date: {{ $reservation->date }}
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @elseif (\Route::current()->getName() == 'company.list.reservations.unpaid')
-                            @foreach ($srtUnpaid as $reservation)
+                            @forelse ($srtUnpaid as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -114,9 +116,11 @@
                                         Reservation date: {{ $reservation->date }}
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @else
-                            @foreach ($reservations as $reservation)
+                            @forelse ($reservations as $reservation)
                                 <div class="col-12 card">
                                     <div class="card-header">
                                         <div class="row">
@@ -161,7 +165,9 @@
                                         Reservation date: {{ $reservation->date }}
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                There are no reservations
+                            @endforelse
                         @endif
                     </div>
                 </div>

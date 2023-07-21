@@ -16,15 +16,8 @@ class UserType
      */
     public function handle(Request $request, Closure $next, $type)
     {
-        if (auth()->user()->user_type == $type) {
-            return $next($request);
-        }
-
-        elseif (auth()->user()->user_type == $type) {
-            return $next($request);
-        }
-
-        elseif (auth()->user()->user_type == $type) {
+        $user = $request->user();
+        if ($user && $user->user_type == $type) {
             return $next($request);
         }
         return redirect('/')->with('error', "No access.");

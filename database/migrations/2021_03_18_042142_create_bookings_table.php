@@ -20,6 +20,7 @@ class CreateBookingsTable extends Migration
             $table->date('return_date');
             $table->string('status');
             $table->boolean('payment')->nullable();
+            $table->timestamps();
         });
     }
 

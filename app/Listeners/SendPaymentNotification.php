@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Notifications\NewPaymentNotificationCompany;
 use App\Notifications\NewPaymentNotificationCurUser;
 use App\Notifications\PaymentNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
 class SendPaymentNotification

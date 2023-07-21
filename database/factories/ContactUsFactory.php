@@ -26,6 +26,9 @@ class ContactUsFactory extends Factory
             'email' => $this->faker->email,
             'contact_num' => $this->faker->phoneNumber,
             'message' => $this->faker->text,
+            'type' => 'emr',
+            'priority' => $this->faker->word,
+            'status' => $this->faker->word
         ];
     }
 }

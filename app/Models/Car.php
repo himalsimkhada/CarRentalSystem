@@ -27,7 +27,7 @@ class Car extends Model
 
     public function company()
     {
-        return $this->belongsTo(CarCompany::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function type()

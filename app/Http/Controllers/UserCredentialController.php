@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UserCredentialsDataTable;
 use App\Models\UserCredential;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class UserCredentialController extends Controller
 {
@@ -12,12 +14,15 @@ class UserCredentialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UserCredentialsDataTable $dataTable)
     {
-        $user_id = auth()->user()->id;
+        return $dataTable->render('credential.index');
+    }
 
-        $credentials = UserCredential::where('user_id', '=', $user_id)->get();
-        return view('user.credential', ['credentials' => $credentials]);
+    public function create()
+    {
+        $credential = new UserCredential();
+        return view('credential.create-edit', compact('credential'));
     }
 
     /**
@@ -28,27 +33,27 @@ class UserCredentialController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = auth()->user()->id;
-        if ($request->hasFile('credential_file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('credential_file')->isValid()) {
+        $user = auth()->user();
+        if ($request->hasFile('file') && $request->hasFile('image')) {
+            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
                 $validate_file = $request->validate([
-                    'credential_file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192'
+                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                    'image' => 'mimes:jpg,png,jpeg|max:8192',
                 ]);
 
-                $extension_file = $validate_file['credential_file']->extension();
+                $extension_file = $validate_file['file']->extension();
 
-                $file = $validate_file['credential_file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'user_credentials');
+                $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
 
                 $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
+                $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
 
                 $values = [
-                    'credential_name' => $request->input('name'),
-                    'credential_file' => $file,
+                    'name' => $request->input('name'),
+                    'file' => $file,
                     'image' => $image,
-                    'credential_id' => $request->input('type_number'),
-                    'user_id' => $user_id
+                    'reg_number' => $request->input('reg_number'),
+                    'user_id' => $user->id,
                 ];
 
                 UserCredential::insert($values);
@@ -62,6 +67,12 @@ class UserCredentialController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $credential = UserCredential::where('id', $id)->first();
+        return view('credential.create-edit', compact('credential'));
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -71,36 +82,45 @@ class UserCredentialController extends Controller
      */
     public function update(Request $request)
     {
-        $user_id = auth()->user()->id;
-        if ($request->hasFile('credential_file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('credential_file')->isValid()) {
+        $id = Crypt::decrypt($request->input('id'));
+        $user = auth()->user();
+        if ($request->hasFile('file') && $request->hasFile('image')) {
+            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
                 $validate_file = $request->validate([
-                    'credential_file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192'
+                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                    'image' => 'mimes:jpg,png,jpeg|max:8192',
                 ]);
 
-                $extension_file = $validate_file['credential_file']->extension();
-                $file = $validate_file['credential_file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'user_credentials');
+                $extension_file = $validate_file['file']->extension();
+                $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
 
                 $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
+                $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
 
                 $values = [
-                    'credential_name' => $request->input('name'),
-                    'credential_file' => $file,
+                    'name' => $request->input('name'),
+                    'file' => $file,
                     'image' => $image,
-                    'credential_id' => $request->input('type_number'),
-                    'user_id' => $user_id
+                    'reg_number' => $request->input('reg_number'),
+                    'user_id' => $user->id,
                 ];
 
-                UserCredential::where('id', '=', $request->input('id'))->update($values);
+                UserCredential::where('id', '=', $id)->update($values);
 
                 return redirect()->back()->with('alert', 'Successfull');
             } else {
                 return redirect()->back()->with('alert', 'Invalid file types');
             }
         } else {
-            return redirect()->back()->with('alert', 'Files not selected');
+            $values = [
+                'name' => $request->input('name'),
+                'reg_number' => $request->input('reg_number'),
+                'user_id' => $user->id,
+            ];
+
+            UserCredential::where('id', $id)->update($values);
+
+            return redirect()->back()->with('alert', 'Successfull');
         }
     }
 
@@ -112,12 +132,8 @@ class UserCredentialController extends Controller
      */
     public function destroy($id)
     {
-        $delete = UserCredential::where('id', '=', $id)->delete();
+        $response = UserCredential::where('id', '=', $id)->delete();
 
-        if ($delete = true) {
-            return redirect()->back()->with('alert', 'Deleted Successfully');
-        } else {
-            return redirect()->back()->with('alert', 'Delete failed');
-        }
+        return response()->json($response);
     }
 }
