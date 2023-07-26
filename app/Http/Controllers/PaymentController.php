@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\BookingPaid;
-use App\Mail\CompanyPaymentRecieveMail;
-use App\Mail\UserPaymentMail;
+use App\Events\PaymentEvent;
 use App\Models\Booking;
-use App\Models\Car;
-use App\Models\Company;
 use App\Models\Invoice;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaymentController extends Controller
 {
@@ -21,44 +17,104 @@ class PaymentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function handlePayment(Request $request)
     {
-        $userDetails = auth()->user();
+        $id = $request->input('id');
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $paypalToken = $provider->getAccessToken();
 
-        $booking_id = $request->get('booking_id');
-
-        $car_id = $request->get('car_id');
-
-        $company_id = Car::where('id', '=', $car_id)->first()->company_id;
-
-        $company_detail = Company::where('id', '=', $company_id)->first();
-        $company_owner_detail = User::where('id', $company_detail->owner_id)->first();
-
-        $values = [
-            'paypal_payer_id' => $request->input('paypal_payer_id'),
-            'transaction_id' => $request->input('paypal_id'),
-            'paypal_email_address' => $request->input('paypal_email_address'),
-            'create_time' => $request->input('create_time'),
-            'update_time' => $request->input('update_time'),
-            'paypal_payer_name' => $request->input('paypal_payer_name'),
-            'amount' => $request->input('amount'),
-            'address' => $request->input('address'),
-            'booking_id' => $booking_id
-        ];
-
-        Invoice::insert($values);
-
-        $booking_val = [
-            'payment' => 1
-        ];
-        Booking::where('id', '=', $booking_id)->update($booking_val);
-
-        event(new BookingPaid($userDetails, $company_owner_detail, $car_id));
-
-        Mail::to(auth()->user()->email)->send(new UserPaymentMail($values));
-
-        Mail::to($company_detail->email)->send(new CompanyPaymentRecieveMail($values, $company_detail));
-
-        return redirect()->route('user.reservation')->with('alert', 'Payment completed and transaction is saved.');
+        $booking = Booking::find($id);
+        if (!$booking) {
+            return redirect()->route('user.index.booking')->with('error', 'Invalid booking ID.');
+        }
+        $response = $provider->createOrder([
+            "intent" => "CAPTURE",
+            "application_context" => [
+                "return_url" => route('paypal.success.payment', ['id' => $booking->id]),
+                "cancel_url" => route('paypal.cancel.payment'),
+            ],
+            "purchase_units" => [
+                0 => [
+                    "amount" => [
+                        "currency_code" => "USD",
+                        "value" => $booking->final_cost,
+                    ],
+                ],
+            ],
+        ]);
+        if (isset($response['id']) && $response['id'] != null) {
+            foreach ($response['links'] as $links) {
+                if ($links['rel'] == 'approve') {
+                    return redirect()->away($links['href']);
+                }
+            }
+            return redirect()
+                ->route('paypal.cancel.payment')
+                ->with('error', 'Something went wrong.');
+        } else {
+            return redirect()
+                ->route('user.index.booking')
+                ->with('error', $response['message'] ?? 'Something went wrong.');
+        }
     }
+
+    public function paymentCancel()
+    {
+        return redirect()
+            ->route('user.index.booking')
+            ->with('error', 'You have canceled the transaction.');
+    }
+
+    public function paymentSuccess(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->getAccessToken();
+            $response = $provider->capturePaymentOrder($request['token']);
+            if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+                $values = [
+                    'paypal_payer_id' => $response['payer']['payer_id'],
+                    'transaction_id' => $response['id'],
+                    'paypal_email_address' => $response['payer']['email_address'],
+                    'create_time' => $response['purchase_units'][0]['payments']['captures'][0]['create_time'],
+                    'update_time' => $response['purchase_units'][0]['payments']['captures'][0]['update_time'],
+                    'paypal_payer_name' => $response['payer']['name']['given_name'] . ' ' . $response['payer']['name']['surname'],
+                    'amount' => $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'],
+                    'address' => $response['purchase_units'][0]['shipping']['address']['address_line_1'] ?? null,
+                    'booking_id' => $id,
+                ];
+                $invoice = Invoice::create($values);
+
+                $booking = Booking::find($id);
+                $user = auth()->user();
+                $car = $booking->car;
+                $company = $car->company;
+
+                if (!$booking) {
+                    return redirect()->route('user.index.booking')->with('error', 'Invalid booking ID.');
+                }
+
+                $booking->payment = $id;
+                $booking->save();
+
+                event(new PaymentEvent($user, $company, $values));
+
+                DB::commit();
+
+                return redirect()->route('user.index.booking')->with('success', 'Transaction complete.');
+            } else {
+                DB::rollBack();
+                return redirect()->route('user.index.booking')->with('error', $response['message'] ?? 'Something went wrong.');
+            }
+        } catch (\Exception $e) {
+            var_dump($e);
+            DB::rollBack();
+            return redirect()->route('user.index.booking')->with('error', 'Error occurred. Payment reverted.');
+        }
+    }
+
 }

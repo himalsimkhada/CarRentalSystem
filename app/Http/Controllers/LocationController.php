@@ -37,11 +37,11 @@ class LocationController extends Controller
         $company_id = auth()->guard('company')->user()->id;
 
         $validatedData = $request->validate([
-            'location' => 'required|string|unique:locations',
+            'name' => 'required|string|unique:locations',
         ]);
 
         $values = [
-            'location' => $request->input('location'),
+            'name' => $request->input('name'),
             'company_id' => $company_id
         ];
         $location->insert($values);
@@ -67,10 +67,10 @@ class LocationController extends Controller
     {
         $id = Crypt::decrypt($request->input('id'));
         $validatedData = $request->validate([
-            'location' => 'required|string||' . Rule::unique('locations')->ignore($id),
+            'name' => 'required|string||' . Rule::unique('locations')->ignore($id),
         ]);
         $values = [
-            'location' => $request->input('location')
+            'name' => $request->input('name')
         ];
         $location->where('id', $id)->update($values);
 

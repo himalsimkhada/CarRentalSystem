@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PartnerRequest;
-use App\Events\ReqApproved;
-use App\Events\ReqDenied;
-use App\Mail\PartnerCompany;
-use App\Models\Company;
+use App\DataTables\PartnerReqsDataTable;
 use App\Models\PartnerReq;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class PartnerReqController extends Controller
 {
@@ -19,70 +14,51 @@ class PartnerReqController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(PartnerReqsDataTable $dataTable)
     {
-        return view('user.request-partner');
+        return $dataTable->render('partner-req.index');
     }
 
-    public function adminReq()
+    public function create()
     {
-        // $getDetails = PartnerReq::all();
-        $getDetails = PartnerReq::select('*', 'partner_reqs.id AS req_id')
-            ->join('users', 'users.id', '=', 'partner_reqs.user_id')
-            ->where('approved', '=', 'waiting')
-            ->get();
-
-        return view('admin.partner-requests', ['details' => $getDetails]);
+        return view('partner-req.create');
     }
 
-    public function approved(Request $request)
+    public function approve(Request $request, $id)
     {
-        $application_id = $request['r_id'];
+        // $partner = PartnerReq::where('id', '=', $application_id)->first();
 
-        $partner = PartnerReq::where('id', '=', $application_id)->first();
+        // $user = User::where('id', '=', $partner->user_id)->first();
 
-        $user = User::where('id', '=', $partner->user_id)->first();
+        // $details = PartnerReq::where('id', '=', $application_id)->get()->toArray();
 
-        $details = PartnerReq::where('id', '=', $application_id)->get()->toArray();
+        // foreach ($details as $detail) {
+        //     $values = [
+        //         'name' => $detail['company_name'],
+        //         'description' => $detail['company_description'],
+        //         'address' => $detail['company_address'],
+        //         'contact' => $detail['company_contact'],
+        //         'registration_number' => $detail['registration_number'],
+        //         'email' => $detail['company_email'],
+        //     ];
 
-        foreach ($details as $detail) {
-            $values = [
-                'name' => $detail['company_name'],
-                'description' => $detail['company_description'],
-                'address' => $detail['company_address'],
-                'contact' => $detail['company_contact'],
-                'registration_number' => $detail['company_reg'],
-                'email' => $detail['company_email'],
-                'owner_id' => $detail['user_id']
-            ];
+        $approve = [
+            'status' => 'approved',
+        ];
 
-            $approve = [
-                'approved' => 'approved',
-            ];
+        PartnerReq::where('id', $id)->update($approve);
 
-            PartnerReq::where('id', '=', $application_id)->update($approve);
+        // Company::insert($values);
+        // }
 
-            event(new ReqApproved($user));
-
-            Company::insert($values);
-        }
-
-        return redirect()->route('admin.requests')->with('alert', 'Request approved.');
+        return redirect()->route('admin.index.partner-req')->with('alert', 'Request approved.');
     }
 
-    public function denied(Request $request)
+    public function deny(Request $request, $id)
     {
-        $application_id = $request['deny_id'];
+        $response = PartnerReq::where('id', '=', $id)->update(['status' => 'denied']);
 
-        $partner_id = PartnerReq::where('id', '=', $application_id)->first();
-
-        $user = User::where('id', '=', $partner_id->user_id)->first();
-
-        PartnerReq::where('id', '=', $application_id)->update(['approved' => 'denied']);
-
-        event(new ReqDenied($user));
-
-        return redirect()->back()->with('alert', 'Request Denied');
+        return response()->json($response);
     }
 
     /**
@@ -99,7 +75,7 @@ class PartnerReqController extends Controller
             'company_name' => 'required|string|unique:companies,name',
             'company_contact' => 'required|string',
             'company_address' => 'required|string',
-            'company_reg' => 'required|string|unique:companies,registration_number',
+            'registration_number' => 'required|string|unique:companies,registration_number',
             'company_email' => 'required|string|unique:companies,email',
         ]);
 
@@ -108,18 +84,13 @@ class PartnerReqController extends Controller
             'company_description' => $request->input('company_description'),
             'company_address' => $request->input('company_address'),
             'company_contact' => $request->input('company_contact'),
-            'company_reg' => $request->input('company_reg'),
+            'registration_number' => $request->input('registration_number'),
             'company_email' => $request->input('company_email'),
-            'user_id' => auth()->user()->id,
-            'approved' => 'waiting'
+            'status' => 'waiting',
         ];
 
         PartnerReq::insert($values);
 
-        Mail::to(auth()->user()->email)->send(new PartnerCompany($values));
-
-        event(new PartnerRequest($user));
-
-        return view('user.partner-req-message');
+        return redirect()->back()->with('alert', 'Thank you. We will get to you soon.');
     }
 }

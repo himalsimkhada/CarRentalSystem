@@ -30,20 +30,16 @@ class Car extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function type()
+    public function bookingType()
     {
         return $this->belongsTo(BookingType::class, 'booking_type_id');
     }
-    public function image()
+    public function images()
     {
         return $this->hasMany(CarImage::class);
     }
-    public function book()
+    public function bookings()
     {
-        return $this->hasOne(Booking::class);
-    }
-    public function review()
-    {
-        return $this->hasOne(CarReview::class);
+        return $this->hasMany(Booking::class, 'car_id');
     }
 }

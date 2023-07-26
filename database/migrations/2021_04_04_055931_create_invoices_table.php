@@ -16,13 +16,13 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->increments('id');
             $table->string('paypal_payer_id');
+            $table->string('paypal_payer_name');
             $table->string('transaction_id');
             $table->string('paypal_email_address');
-            $table->string('create_time');
-            $table->string('update_time');
-            $table->string('paypal_payer_name');
             $table->string('amount');
             $table->string('address');
+            $table->string('create_time');
+            $table->string('update_time');
             $table->timestamps();
         });
     }

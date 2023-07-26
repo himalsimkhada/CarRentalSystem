@@ -18,8 +18,8 @@
                                 method="post" class="needs-validation" novalidate>
                                 @csrf
                                 <input type="hidden" value="{{ Crypt::encrypt($user->id) }}" name="id">
-                                <div class="form-group">
-                                    <input type="file" class="form-control border-0" name="profile_photo" required>
+                                <div class="mb-3">
+                                    <input type="file" class="form-control " name="profile_photo" required>
                                     <div class="invalid-tooltip">
                                         Please provide a profile image.
                                     </div>
@@ -38,7 +38,7 @@
                             <div class="card-body">
                                 <h4 class="card-title">Informations</h4>
                                 <hr>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <input type="hidden" value="{{ Crypt::encrypt($user->id) }}" name="id">
                                     <div class="row">
                                         <div class="col">
@@ -53,14 +53,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Date of birth</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Date of birth</label>
                                     <input type="date" name="date_of_birth" class="form-control" disabled
                                         value="{{ $user->date_of_birth }}" required readonly>
                                     <small class="form-text text-muted">Contact admin to change your date of
                                         birth.</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <div class="row">
                                         <div class="col">
                                             <label class="">Address</label>
@@ -74,28 +74,28 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Username</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Username</label>
                                     <input type="text" class="form-control" name="username" value="{{ $user->username }}"
                                         required>
                                 </div>
-                                <div class="form-group">
-                                    <label>E-mail</label>
+                                <div class="mb-3">
+                                    <label class="form-label">E-mail</label>
                                     <input type="email" name="email" class="form-control" value="{{ $user->email }}"
                                         required readonly>
                                     <small class="form-text text-muted">Contact admin to change your email
                                         address.</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label class="form-label">Password</label>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-target="#changePass">Change Password
                                         <span class="material-icons align-middle">
                                             lock
                                         </span>
                                     </button>
                                 </div>
-                                <button type="submit" class="btn btn-primary float-right">Submit</button>
+                                <button type="submit" class="btn btn-primary float-end">Submit</button>
                             </div>
                         </div>
                     </form>
@@ -123,12 +123,12 @@
                             novalidate>
                             @csrf
                             <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Old Password</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Old Password</label>
                                     <input type="password" name="old_password" class="form-control" required>
                                 </div>
-                                <div class="form-group">
-                                    <label>Password</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
                                     <input type="password" name="password" minlength="8" class="form-control" required>
                                     <div class="invalid-feedback">
                                         Must be 8 characters

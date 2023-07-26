@@ -23,7 +23,7 @@
                             alt=""
                             class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}">
                         <div class="card-body">
-                            <input type="file" name="primary_image" id="" class="border-0 form-control">
+                            <input type="file" name="primary_image" id="" class="form-control">
                             <div class="invalid-tooltip">
                                 Please provide a primary image for car.
                             </div>
@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Informations</h4>
                             <hr>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col">
                                         <label class="">Model</label>
@@ -49,11 +49,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Description</label>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
                                 <textarea class="form-control" name="description">{{ $car->description }}</textarea>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col">
                                         <label class="">Brand</label>
@@ -67,13 +67,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col">
                                         <label class="">Booking Type</label>
-                                        <select class="custom-select" name="booking_type_id" id="" required>
-                                            <option value="{{ $car->type ? $car->type->id : '' }}" hidden selected>
-                                                {{ $car->type ? $car->type->name : 'Select' }}
+                                        <select class="form-select" name="booking_type_id" id="" required>
+                                            <option value="{{ $car->bookingType ? $car->bookingType->id : '' }}" hidden selected>
+                                                {{ $car->bookingType ? $car->bookingType->name : 'Select' }}
                                             </option>
                                             @foreach ($types as $type)
                                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -93,7 +93,7 @@
                                 <label class="form-check-label">Availability</label>
                             </div>
                             <div>
-                                <button type="submit" class="d-inline-block btn btn-primary float-right">Submit</button>
+                                <button type="submit" class="d-inline-block btn btn-primary float-end">Submit</button>
                             </div>
                         </div>
                     </div>

@@ -17,9 +17,10 @@ class CreateBookingsTable extends Migration
             $table->increments('id');
             $table->datetime('booking_date');
             $table->date('date');
-            $table->date('return_date');
+            $table->datetime('return_date');
             $table->string('status');
             $table->boolean('payment')->nullable();
+            $table->double('final_cost');
             $table->timestamps();
         });
     }

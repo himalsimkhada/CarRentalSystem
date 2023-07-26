@@ -1,9 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Models\BookingType;
-use Database\Factories\TestingFactory;
+use Database\Seeders\DefaultSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        TestingFactory::new();
+        $this->call(DefaultSeeder::class);
     }
 }

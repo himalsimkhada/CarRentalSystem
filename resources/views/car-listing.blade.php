@@ -6,7 +6,7 @@
     <ul class="list-inline text-right">
         <li class="list-inline-item">
             <div class="dropdown open drop-left">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown"
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Sort by
                 </button>
@@ -148,7 +148,7 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">Brand: {{ $list->brand }}</li>
                                         <li class="list-group-item">Color: {{ $list->color }}</li>
-                                        <li class="list-group-item">Capacity: {{ $list->type->people_no }}</li>
+                                        <li class="list-group-item">Capacity: {{ $list->bookingType->people_no }}</li>
                                     </ul>
                                     <a href="{{ route('car.detail', ['car-id' => $list->id]) }}"
                                         class="btn btn-primary mt-3">View

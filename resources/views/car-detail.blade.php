@@ -42,15 +42,15 @@
                                 <p class="card-text">{{ $detail->description }}</p>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">Color: {{ $detail->color }}</li>
-                                    <li class="list-group-item">Capacity: {{ $detail->type->people_no }}</li>
+                                    <li class="list-group-item">Capacity: {{ $detail->bookingType->people_no }}</li>
                                     <li class="list-group-item">Availability: {{ $detail->availability }}</li>
                                     <li class="list-group-item">Company: {{ $detail->company->name }}</li>
                                 </ul>
-                                <p class="pricing">Cost (Per Day): ${{ $detail->type->cost }}</p>
+                                <p class="pricing">Cost (Per Day): ${{ $detail->bookingType->cost }}</p>
                                 <div class="booking">
                                     <button type="button" class="btn btn-success form-control text-left"
-                                        data-toggle="modal" data-target="#bookingDialouge">Book<span
-                                            class="material-icons float-right align-middle">
+                                        data-bs-toggle="modal" data-bs-target="#bookingDialouge">Book<span
+                                            class="material-icons float-end align-middle">
                                             payments
                                         </span></button>
                                 </div>
@@ -61,43 +61,38 @@
             </div>
             <div class="modal fade" id="bookingDialouge" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Reservation</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
                         @if (Request::has('date') || Request::has('return') || Request::has('type'))
                             <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Pick Date</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Pick Date</label>
                                     <input type="date" name="date" value="{{ Request::get('date') }}"
                                         class="form-control" min="{{ date('Y-m-d') }}">
                                 </div>
-                                <div class="form-group">
-                                    <label>Drop Date</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Drop Date</label>
                                     <input type="date" name="return-date" class="form-control"
                                         value="{{ Request::get('return') }}">
                                 </div>
-                                <div class="form-group">
-                                    <label>Booking Type</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Booking Type</label>
                                     <input type="text" name="bookingtype" class="form-control"
-                                        value="{{ $detail->type->name }}" readonly>
+                                        value="{{ $detail->bookingType->name }}" readonly>
                                 </div>
-                                <div class="form-group">
-                                    <label>Location</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
                                     <input type="text" name="location" class="form-control"
                                         value="{{ Request::get('location') }}" readonly>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal"><span
-                                        class="material-icons">
-                                        cancel
-                                    </span></button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                 <a href="{{ route('user.car.book.index', ['car-id' => $detail->id, 'pickdate' => $pickdate, 'dropdate' => $dropdate, 'bookingtype' => $bookingtype]) }}"
                                     class="btn btn-primary">Book</a>
                             </div>
@@ -107,24 +102,24 @@
                                 @csrf
                                 <div class="modal-body">
                                     <input type="text" name="car_id" value="{{ Request::get('car-id') }}" hidden>
-                                    <div class="form-group">
-                                        <label>Pick Date</label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pick Date</label>
                                         <input type="date" name="date" value="{{ date('Y-m-d') }}"
                                             min="{{ date('Y-m-d') }}" class="form-control" required>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Drop Date</label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Drop Date</label>
                                         <input type="date" name="return_date" min="{{ date('Y-m-d') }}"
                                             class="form-control" required>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Booking Type</label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Booking Type</label>
                                         <input type="text" name="bookingtype" value="{{ $type_name }}"
                                             class="form-control" readonly>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="">Location</label>
-                                        <select class="custom-select" name="location">
+                                        <select class="form-select" name="location">
                                             <option selected disabled>Select one</option>
                                             @foreach ($locations as $location)
                                                 <option value="{{ $location->id }}">{{ $location->location }}
@@ -134,10 +129,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><span
-                                            class="material-icons">
-                                            cancel
-                                        </span></button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-primary">Book</button>
                                 </div>
                             </form>

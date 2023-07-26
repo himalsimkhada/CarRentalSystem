@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BookingType;
 use App\Models\Car;
+use App\Models\CarImage;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,7 @@ class PagesController extends Controller
             ->join('companies', 'companies.id', '=', 'cars.company_id')
             ->join('locations', 'locations.company_id', '=', 'companies.id')
             ->join('booking_types', 'booking_types.id', '=', 'cars.booking_type_id')
-            ->where('locations.location', '=', $location)
+            ->where('locations.name', '=', $location)
             ->where('booking_types.name', '=', $type)
             ->where('cars.availability', '=', 1)
             ->get();
@@ -54,15 +55,15 @@ class PagesController extends Controller
 
     public function car_list(Request $request)
     {
-        $display_all = Car::with('image', 'type')->where('availability', '=', 1)->get();
+        $cars = Car::with('images', 'bookingType')->where('availability', 1)->get();
 
-        $srtpricedesc = BookingType::select('*')
-            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
+        $srtpricedesc = Car::with('bookingType')->join('booking_types', 'cars.booking_type_id', '=', 'booking_types.id')
+            ->where('availability', 1)
             ->orderBy('booking_types.cost', 'DESC')
             ->get();
 
-        $srtpriceasc = BookingType::select('*')
-            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
+        $srtpriceasc = Car::with('bookingType')->join('booking_types', 'cars.booking_type_id', '=', 'booking_types.id')
+            ->where('availability', 1)
             ->orderBy('booking_types.cost', 'ASC')
             ->get();
 
@@ -72,9 +73,62 @@ class PagesController extends Controller
             ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
             ->join('companies', 'companies.id', '=', 'cars.company_id')
             ->join('locations', 'locations.company_id', 'companies.id')
-            ->where('locations.location', 'LIKE', '%' . $location . '%')
+            ->where('locations.name', 'LIKE', '%' . $location . '%')
+            ->where('availability', 1)
             ->get();
 
-        return view('/car-listing', ['lists' => $display_all, 'pricedesc' => $srtpricedesc, 'priceasc' => $srtpriceasc, 'location' => $searchLoc]);
+        return view('car-listing', ['lists' => $cars, 'pricedesc' => $srtpricedesc, 'priceasc' => $srtpriceasc, 'location' => $searchLoc]);
     }
+
+    public function show(Request $request)
+    {
+        $booking_type_list = BookingType::all();
+        $locations = Location::all();
+
+        $car_id = $request->get('car-id');
+        $pick_date = $request->get('date');
+        $drop_date = $request->get('return');
+        $type = $request->get('type');
+
+        $get_type = Car::with('bookingType')->where('id', '=', $car_id)->first()->bookingType->name;
+
+        $cars = Car::with(['company', 'bookingType', 'images'])->where('id', '=', $car_id)->get();
+
+        $images = CarImage::with('car')->where('car_id', '=', $car_id)->get();
+
+        return view('car-detail', ['car_detail' => $cars, 'pickdate' => $pick_date, 'dropdate' => $drop_date, 'bookingtype' => $type, 'types' => $booking_type_list, 'type_name' => $get_type, 'images' => $images, 'locations' => $locations]);
+    }
+
+    public function getCategory(Request $request, $id)
+    {
+        $getcars = Car::select('*')
+            ->join('booking_types', 'booking_types.id', '=', 'cars.booking_type_id')
+            ->where('booking_types.id', '=', $id)
+            ->get();
+
+        $srtpricedesc = BookingType::select('*')
+            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
+            ->where('booking_types.id', '=', $id)
+            ->orderBy('booking_types.cost', 'DESC')
+            ->get();
+
+        $srtpriceasc = BookingType::select('*')
+            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
+            ->where('booking_types.id', '=', $id)
+            ->orderBy('booking_types.cost', 'ASC')
+            ->get();
+
+        $location = $request->get('search-location');
+
+        $searchLoc = Car::select('*')
+            ->join('booking_types', 'booking_types.id', '=', 'cars.booking_type_id')
+            ->join('companies', 'companies.id', '=', 'cars.company_id')
+            ->join('locations', 'locations.company_id', 'companies.id')
+            ->where('locations.name', 'LIKE', '%' . $location . '%')
+            ->where('booking_types.id', '=', $id)
+            ->get();
+
+        return view('car-list-category', ['lists' => $getcars, 'pricedesc' => $srtpricedesc, 'priceasc' => $srtpriceasc, 'location' => $searchLoc]);
+    }
+
 }

@@ -60,24 +60,23 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function company()
-    {
-        return $this->hasOne(Company::class, 'owner_id');
-    }
+    // public function isAdmin()
+    // {
+    //     if ($this->user_type == 1) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
-    public function books()
+    public function bookings()
     {
-        return $this->hasOne(Booking::class);
+        return $this->hasMany(Booking::class);
     }
 
     public function credentials()
     {
         return $this->hasMany(UserCredential::class);
-    }
-
-    public function review()
-    {
-        return $this->hasMany(CarReview::class);
     }
 
     public function getProfilePhotoUrlAttribute()

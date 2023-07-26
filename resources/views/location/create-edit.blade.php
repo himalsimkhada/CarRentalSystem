@@ -21,13 +21,13 @@
                         <div class="card-body">
                             <h4 class="card-title">Informations</h4>
                             <hr>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <input type="hidden" value="{{ Crypt::encrypt($location->id) }}" name="id">
                                 <label class="">Location Name</label>
-                                <input type="text" class="form-control" name="location" value="{{ $location->name }}"
+                                <input type="text" class="form-control" name="name" value="{{ $location->name }}"
                                     required>
                             </div>
-                            <button type="submit" class="btn btn-primary float-right">Submit</button>
+                            <button type="submit" class="btn btn-primary float-end">Submit</button>
                         </div>
                     </div>
                     </form>

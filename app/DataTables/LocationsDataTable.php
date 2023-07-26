@@ -71,7 +71,7 @@ class LocationsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('location'),
+            Column::make('name'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

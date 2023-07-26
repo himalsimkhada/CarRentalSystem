@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\CarReserved;
-use App\Mail\BookingMail;
+use App\DataTables\BookingsDataTable;
+use App\Events\BookingEvent;
 use App\Models\Booking;
 use App\Models\BookingType;
 use App\Models\Car;
-use App\Models\Company;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
+
+    public function index(BookingsDataTable $dataTable)
+    {
+        return $dataTable->render('booking.index');
+    }
+
+    public function show($id)
+    {
+        $booking = Booking::with(['user', 'car', 'bookingType'])->where('id', $id)->first();
+
+        return view('booking.show', ['booking' => $booking]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -22,187 +33,109 @@ class BookingController extends Controller
      */
     public function storeFromIndex(Request $request)
     {
-        $userData = auth()->user();
-        $id = auth()->user()->id;
-        $check_exists = Booking::where('user_id', '=', $id)
-            ->exists();
-        $booking_ongoing = Booking::where('user_id', '=', $id)
-            ->where('status', '=', 'ongoing')
-            ->exists();
+        $user = auth()->user();
+        $userId = $user->id;
 
-        $booking_type = $request->get('bookingtype');
-        $booking_types = BookingType::where('name', '=', $booking_type)->first();
+        $existingBooking = Booking::where('user_id', $userId)->exists();
+        $ongoingBooking = Booking::where('user_id', $userId)->where('status', 'ongoing')->exists();
 
-        $s_date = date_create($request->get('pickdate'));
-        $d_date = date_create($request->get('dropdate'));
+        $bookingType = BookingType::where('name', $request->input('bookingtype'))->firstOrFail();
 
-        $date_diff = date_diff($s_date, $d_date);
+        $startDate = date_create($request->input('pickdate'));
+        $endDate = date_create($request->input('dropdate'));
+        $daysDifference = date_diff($startDate, $endDate)->format('%a');
+        $finalCost = $bookingType->cost * $daysDifference;
 
-        $day = $date_diff->format('%a');
+        $car = Car::findOrFail($request->input('car-id'));
+        $company = $car->company;
 
-        $final_cost = $booking_types->cost * $day;
+        try {
+            DB::beginTransaction();
 
-        $car_id = $request->get('car-id');
-
-        $company_id = Car::where('id', $car_id)->first()->company_id;
-
-        $company = Company::with('user')->where('id', $company_id)->first();
-
-        if (!$check_exists) {
-            $change_availability = [
-                'availability' => 0
-            ];
-            Car::where('id', '=', $request->get('car-id'))->update($change_availability);
-
-            $values = [
-                'booking_date' => date('Y-m-d H:i:s'),
-                'date' => $request->get('pickdate'),
-                'return_date' => $request->get('dropdate'),
-                'status' => 'ongoing',
-                'final_cost' => $final_cost,
-                'payment' => 0,
-                'booking_type_id' => $booking_types->id,
-                'car_id' => $request->get('car-id'),
-                'user_id' => auth()->user()->id,
-                'location_id' => 1
-            ];
-            Booking::insert($values);
-
-            Mail::to(auth()->user()->email)->send(new BookingMail($values));
-
-            event(new CarReserved($userData, $company, $car_id));
-
-            return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
-        } elseif ($check_exists) {
-            if (!$booking_ongoing) {
-                $change_availability = [
-                    'availability' => 0
-                ];
-                Car::where('id', '=', $request->get('car-id'))->update($change_availability);
+            if (!$existingBooking || !$ongoingBooking) {
+                $car->update(['availability' => 0]);
+                $bookingType->update(['count_reservation' => ($bookingType->count_reservation+1)]);
 
                 $values = [
-                    'booking_date' => date('Y-m-d H:i:s'),
-                    'date' => $request->get('pickdate'),
-                    'return_date' => $request->get('dropdate'),
+                    'booking_date' => now(),
+                    'date' => $request->input('pickdate'),
+                    'return_date' => $request->input('dropdate'),
                     'status' => 'ongoing',
-                    'final_cost' => $final_cost,
+                    'final_cost' => $finalCost,
                     'payment' => 0,
-                    'booking_type_id' => $booking_types->id,
-                    'car_id' => $request->get('car-id'),
-                    'user_id' => auth()->user()->id,
-                    'location_id' => 1
+                    'booking_type_id' => $bookingType->id,
+                    'car_id' => $request->input('car-id'),
+                    'user_id' => $userId,
+                    'location_id' => 1,
                 ];
                 Booking::insert($values);
 
-                Mail::to(auth()->user()->email)->send(new BookingMail($values));
+                event(new BookingEvent($user, $company, $values));
 
-                event(new CarReserved($userData, $company, $car_id));
-
-                return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
+                DB::commit();
+                return redirect()->route('user.index.booking')->with('alert', 'Successfully booked.');
             } else {
+                DB::rollBack();
                 return redirect()->back()->with('alert', 'Booking already exists from the user.');
             }
-        } else {
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('alert', 'Error. Please try again.');
         }
     }
 
     public function storeFromList(Request $request)
     {
-        $userData = auth()->user();
+        $user = auth()->user();
+        $userId = $user->id;
 
-        $id = auth()->user()->id;
+        $existingBooking = Booking::where('user_id', $userId)->exists();
+        $ongoingBooking = Booking::where('user_id', $userId)->where('status', 'ongoing')->exists();
 
-        $check_exists = Booking::where('user_id', '=', $id)
-            ->exists();
-        $booking_ongoing = Booking::where('user_id', '=', $id)
-            ->where('status', '=', 'ongoing')
-            ->exists();
+        $bookingType = BookingType::where('name', $request->input('bookingtype'))->firstOrFail();
 
-        $booking_type = $request->get('bookingtype');
-        $booking_get = BookingType::where('name', '=', $booking_type)->first();
+        $startDate = date_create($request->input('date'));
+        $endDate = date_create($request->input('return_date'));
+        $daysDifference = date_diff($startDate, $endDate)->format('%a');
+        $finalCost = $bookingType->cost * $daysDifference;
 
-        $s_date = date_create($request->get('date'));
-        $d_date = date_create($request->get('return_date'));
+        $carId = $request->input('car-id');
+        $car = Car::findOrFail($carId);
+        $company = $car->company;
 
-        $date_diff = date_diff($s_date, $d_date);
+        try {
+            DB::beginTransaction();
 
-        $day = $date_diff->format('%a');
-
-        $final_cost = $booking_get->cost * $day;
-
-        $car_id = $request->get('car-id');
-
-        $company_id = Car::where('id', '=', $car_id)->first()->company_id;
-
-        $company = Company::where('id', $company_id)->first();
-
-        if (!$check_exists) {
-            $change_availability = [
-                'availability' => 0
-            ];
-            Car::where('id', '=', $request->input('car_id'))->update($change_availability);
-
-            $values = [
-                'booking_date' => date('Y-m-d H:i:s'),
-                'date' => $request->input('date'),
-                'return_date' => $request->input('return_date'),
-                'status' => 'ongoing',
-                'final_cost' => $final_cost,
-                'payment' => 0,
-                'booking_type_id' => $booking_get->id,
-                'car_id' => $request->input('car_id'),
-                'user_id' => auth()->user()->id,
-                'location_id' => 1
-            ];
-            Booking::insert($values);
-
-            Mail::to(auth()->user()->email)->send(new BookingMail($values));
-
-            event(new CarReserved($userData, $company, $car_id));
-
-            return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
-        } elseif ($check_exists) {
-            if (!$booking_ongoing) {
-                $change_availability = [
-                    'availability' => 0
-                ];
-                Car::where('id', '=', $request->input('car_id'))->update($change_availability);
+            if (!$existingBooking || !$ongoingBooking) {
+                $car->update(['availability' => 0]);
+                $bookingType->update(['count_reservation' => ($bookingType->count_reservation+1)]);
 
                 $values = [
-                    'booking_date' => date('Y-m-d H:i:s'),
+                    'booking_date' => now(),
                     'date' => $request->input('date'),
                     'return_date' => $request->input('return_date'),
                     'status' => 'ongoing',
-                    'final_cost' => $final_cost,
+                    'final_cost' => $finalCost,
                     'payment' => 0,
-                    'booking_type_id' => $booking_get->id,
-                    'car_id' => $request->input('car_id'),
-                    'user_id' => auth()->user()->id,
-                    'location_id' => 1
+                    'booking_type_id' => $bookingType->id,
+                    'car_id' => $carId,
+                    'user_id' => $userId,
+                    'location_id' => 1,
                 ];
                 Booking::insert($values);
 
-                Mail::to(auth()->user()->email)->send(new BookingMail($values));
+                event(new BookingEvent($user, $company, $values));
 
-                event(new CarReserved($userData, $company, $car_id));
-
+                DB::commit();
                 return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
             } else {
+                DB::rollBack();
                 return redirect()->back()->with('alert', 'Booking already exists from the user.');
             }
-        } else {
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('alert', 'Error. Please try again.');
         }
-    }
-
-    public static function paidVal()
-    {
-        $id = auth()->user()->id;
-        $values = [
-            'payment' => 1
-        ];
-        Booking::where('user_id', '=', $id)->update($values);
     }
 
     /**
@@ -213,16 +146,19 @@ class BookingController extends Controller
      */
     public function destroy(Booking $booking, $id)
     {
-        $car_id = $booking->where('id', '=', $id)->first();
+        try {
+            DB::beginTransaction();
 
-        $change_availability = [
-            'availability' => 1
-        ];
+            $bookingData = $booking->findOrFail($id);
+            $response = $bookingData->delete();
+            $bookingData->bookingType->update(['count_reservation' => ($bookingData->bookingType->count_reservation-1)]);
+            $bookingData->car->update(['availability' => 1]);
 
-        Car::where('id', '=', $car_id->car_id)->update($change_availability);
-
-        $booking->where('id', '=', $id)->delete();
-
-        return redirect()->back()->with('alert', 'Reservation cancelled successfully.');
+            DB::commit();
+            return response()->json($response);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('alert', 'Error canceling reservation. Please try again.');
+        }
     }
 }

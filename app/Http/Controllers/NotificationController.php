@@ -6,35 +6,45 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function notification()
+    public function index()
     {
-        $allNotifications = auth()->user()->unreadNotifications;
+        if (auth()->check()) {
+            $notifications = auth()->user()->unreadNotifications;
+        } else if (auth()->guard('company')->check()) {
+            $notifications = auth()->guard('company')->user()->unreadNotifications;
+        }
 
-        return view('admin.notifications', ['notifications' => $allNotifications]);
+        return view('notification.index', ['notifications' => $notifications]);
     }
 
-    public function companyNotifications()
+    public function getUnreadNotificationCount()
     {
-        $allNotifications = auth()->guard('company')->user()->unreadNotifications;
+        if (auth()->check()) {
+            $count = auth()->user()->unreadNotifications()->count();
+        } else if (auth()->guard('company')->check()) {
+            $count = auth()->guard('company')->user()->unreadNotifications()->count();
+        }
 
-        return view('company.notifications', ['notifications' => $allNotifications]);
-    }
-
-    public function userNotifications()
-    {
-        $allNotifications = auth()->user()->unreadNotifications;
-
-        return view('user.notifications', ['notifications' => $allNotifications]);
+        return response()->json(['count' => $count]);
     }
 
     public function markNotification(Request $request)
     {
-        auth()->user()
-            ->unreadNotifications
-            ->when($request->input('id'), function ($query) use ($request) {
-                return $query->where('id', $request->input('id'));
-            })
-            ->markAsRead();
+        if (auth()->guard('company')->check()) {
+            auth()->guard('company')->user()
+                ->unreadNotifications
+                ->when($request->input('id'), function ($query) use ($request) {
+                    return $query->where('id', $request->input('id'));
+                })
+                ->markAsRead();
+        } else if (auth()->check()) {
+            auth()->user()
+                ->unreadNotifications
+                ->when($request->input('id'), function ($query) use ($request) {
+                    return $query->where('id', $request->input('id'));
+                })
+                ->markAsRead();
+        }
 
         return response()->noContent();
     }

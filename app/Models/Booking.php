@@ -26,24 +26,29 @@ class Booking extends Model
         'final_cost',
     ];
 
-    public function car()
-    {
-        return $this->hasOne(Car::class);
-    }
-
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function type()
+    public function car()
     {
-        return $this->hasOne(BookingType::class);
+        return $this->belongsTo(Car::class);
     }
+
+    public function bookingType()
+    {
+        return $this->belongsTo(BookingType::class);
+    }
+
+    // public function company()
+    // {
+    //     return $this->belongsToThrough
+    // }
 
     public function location()
     {
-        return $this->hasOne(Location::class);
+        return $this->belongsTo(Location::class);
     }
 
     public function invoice()

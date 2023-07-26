@@ -6,7 +6,7 @@
     <ul class="list-inline text-right">
         <li class="list-inline-item">
             <div class="dropdown open drop-left">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown"
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Sort by
                 </button>
@@ -48,7 +48,8 @@
                     @foreach ($pricedesc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                    class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -79,7 +80,8 @@
                     @foreach ($priceasc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                    class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -110,7 +112,8 @@
                     @forelse ($location as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                    class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -146,7 +149,8 @@
                     @foreach ($lists as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                    class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -155,7 +159,7 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">Brand: {{ $list->brand }}</li>
                                         <li class="list-group-item">Color: {{ $list->color }}</li>
-                                        <li class="list-group-item">Capacity: {{ $list->type->people_no }}</li>
+                                        <li class="list-group-item">Capacity: {{ $list->bookingType->people_no }}</li>
                                     </ul>
                                     <a href="{{ route('car.detail', ['car-id' => $list->id]) }}"
                                         class="btn btn-primary mt-3">View

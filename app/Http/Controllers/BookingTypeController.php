@@ -106,8 +106,6 @@ class BookingTypeController extends Controller
     public function destroy(BookingType $bookingType, $id)
     {
         $response = $bookingType->where('id', $id)->delete();
-
-        // return redirect()->back()->with('alert', 'Booking type successfully deleted.');
         return response()->json($response);
     }
 }

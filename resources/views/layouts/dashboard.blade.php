@@ -9,11 +9,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - @yield('title')</title>
 
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+    <!-- Scripts -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/favicon-16x16.png') }}">
 
     @include('layouts.style')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
 </head>
 
 <body>
@@ -69,90 +77,9 @@
             alert(msg);
         }
     </script>
-
-    @if (auth()->guard('company')->check())
-        <script>
-            function sendMarkRequest(id = null) {
-                return $.ajax("{{ route('company.markNotification') }}", {
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id
-                    }
-                });
-            }
-            $(function() {
-                $('.mark-as-read').click(function() {
-                    let request = sendMarkRequest($(this).data('id'));
-                    request.done(() => {
-                        $(this).parents('div.alert').remove();
-                    });
-                });
-                $('#mark-all').click(function() {
-                    let request = sendMarkRequest();
-                    request.done(() => {
-                        $('div.alert').remove();
-                    })
-                });
-            });
-        </script>
-    @else
-        @if (auth()->user()->user_type == 1)
-            <script>
-                function sendMarkRequest(id = null) {
-                    return $.ajax("{{ route('admin.markNotification') }}", {
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            id
-                        }
-                    });
-                }
-                $(function() {
-                    $('.mark-as-read').click(function() {
-                        let request = sendMarkRequest($(this).data('id'));
-                        request.done(() => {
-                            $(this).parents('div.alert').remove();
-                        });
-                    });
-                    $('#mark-all').click(function() {
-                        let request = sendMarkRequest();
-                        request.done(() => {
-                            $('div.alert').remove();
-                        })
-                    });
-                });
-            </script>
-        @endif
-
-        @if (auth()->user()->user_type == 3)
-            <script>
-                function sendMarkRequest(id = null) {
-                    return $.ajax("{{ route('user.markNotification') }}", {
-                        method: 'POST',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            id
-                        }
-                    });
-                }
-                $(function() {
-                    $('.mark-as-read').click(function() {
-                        let request = sendMarkRequest($(this).data('id'));
-                        request.done(() => {
-                            $(this).parents('div.alert').remove();
-                        });
-                    });
-                    $('#mark-all').click(function() {
-                        let request = sendMarkRequest();
-                        request.done(() => {
-                            $('div.alert').remove();
-                        })
-                    });
-                });
-            </script>
-        @endif
-    @endif
+    <footer class="bg-dark text-center text-white">
+        @include('layouts.footer')
+    </footer>
     @stack('scripts')
 </body>
 

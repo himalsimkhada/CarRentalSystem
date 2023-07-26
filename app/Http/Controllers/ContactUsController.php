@@ -15,35 +15,22 @@ class ContactUsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ContactUsDataTable $dataTable)
     {
-        $detail = auth()->user();
-
-        return view('contact-us', ['details' => $detail]);
+        return $dataTable->render('contact-us.index');
     }
 
-    public function adminSupport(ContactUsDataTable $dataTable)
+    public function create()
     {
-        return $dataTable->render('admin.message');
+        $user = auth()->user();
+
+        return view('contact-us.create', ['user' => $user]);
     }
 
-    // public function companySupport()
-    // {
-    //     $getMessages = ContactUs::where('type', '=', 'emr')->get();
-
-    //     return view('company/message', ['messages' => $getMessages]);
-    // }
-
-    public function companySupport(ContactUsDataTable $dataTable)
-    {
-        return $dataTable->render('company.message');
-    }
 
     public function emailCustomer(Request $request, $id, $user_id)
     {
         $email_message = $request->input('result');
-        // dd($email_message);
-
         $user_detail = User::where('id', '=', $user_id)->first();
 
         Mail::raw($email_message, function ($message) use ($user_detail) {

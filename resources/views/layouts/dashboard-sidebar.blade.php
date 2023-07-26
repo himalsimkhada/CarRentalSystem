@@ -12,57 +12,61 @@
                 </div>
                 <li>
                     <a href="{{ route('admin.dashboard') }}">Dashboard <span
-                            class="material-icons align-middle float-right">
+                            class="material-icons align-middle float-end">
                             dashboard
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('index') }}">Homepage <span class="material-icons align-middle float-right">
+                    <a href="{{ route('index') }}">Homepage <span class="material-icons align-middle float-end">
                             home
                         </span></a>
                 </li>
                 <li>
                     <a href="{{ route('admin.notification') }}">Notification <span
-                            class="badge badge-primary">{{ auth()->user()->unreadNotifications()->count() }}</span><span
-                            class="material-icons align-middle float-right">
+                            class="badge badge-primary notification-badge">{{ auth()->user()->unreadNotifications()->count() }}</span><span
+                            class="material-icons align-middle float-end">
                             notifications
                         </span></a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.index.partner-req') }}">Partner Requests</a>
                 </li>
                 <li>
                     <a href="{{ route('admin.messages') }}">Messages</a>
                 </li>
                 <li>
-                    <a href="#users" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Entities</a>
+                    <a href="#users" data-bs-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Entities</a>
                     <ul class="collapse list-unstyled" id="users">
                         <li>
                             <a href="{{ route('admin.index.car') }}">Cars<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     directions_car
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('admin.index.company') }}">Companies<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     business
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('admin.user.list') }}">Users<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     person
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('admin.list.type') }}">Types<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     format_list_bulleted
                                 </span></a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="{{ route('admin.list.reservations') }}">Reservations<span
-                            class="material-icons align-middle float-right">
+                    <a href="{{ route('user.index.booking') }}">Bookings<span
+                            class="material-icons align-middle float-end">
                             book_online
                         </span></a>
                 </li>
@@ -89,8 +93,7 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <h1>{{ auth()->guard('company')->user()->logo }}</h1>
-                    <img src="{{ file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo)) ? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo) : asset('/images/company/profile_images/default.png') }}"
+                    <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo))? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ auth()->guard('company')->user()->name }}</p>
@@ -98,20 +101,20 @@
                 </div>
                 <li>
                     <a href="{{ route('company.dashboard') }}">Dashboard<span
-                            class="material-icons align-middle float-right">
+                            class="material-icons align-middle float-end">
                             dashboard
                         </span></a>
 
                 </li>
                 <li>
-                    <a href="{{ route('index') }}">Homepage<span class="material-icons align-middle float-right">
+                    <a href="{{ route('index') }}">Homepage<span class="material-icons align-middle float-end">
                             home
                         </span></a>
                 </li>
                 <li>
                     <a href="{{ route('company.notification') }}">Notification <span
-                            class="badge badge-primary">{{ auth()->guard('company')->user()->unreadNotifications()->count() }}</span><span
-                            class="material-icons align-middle float-right">
+                            class="badge badge-primary notification-badge">{{ auth()->guard('company')->user()->unreadNotifications()->count() }}</span><span
+                            class="material-icons align-middle float-end">
                             notifications
                         </span></a>
                 </li>
@@ -119,36 +122,36 @@
                     <a href="{{ route('company.messages') }}">Messages</a>
                 </li>
                 <li>
-                    <a href="{{ route('company.index.car') }}">Cars<span
-                            class="material-icons align-middle float-right">
+                    <a href="{{ route('company.index.car') }}">Cars<span class="material-icons align-middle float-end">
                             directions_car
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('company.list.reservations') }}">Reservations<span
-                            class="material-icons align-middle float-right">
+                    <a href="{{ route('company.index.booking') }}">Bookings<span
+                            class="material-icons align-middle float-end">
                             book_online
                         </span></a>
                 </li>
                 <li>
-                    <a href="#profile" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Profile</a>
+                    <a href="#profile" data-bs-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Profile</a>
                     <ul class="collapse list-unstyled" id="profile">
                         <li>
                             <a
                                 href="{{ route('company.edit.profile', ['id' => Crypt::encrypt(auth()->guard('company')->user()->id)]) }}">Edit
-                                Company Details<span class="material-icons align-middle float-right">
+                                Company Details<span class="material-icons align-middle float-end">
                                     edit
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('company.index.credential') }}">Company Credentials<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     enhanced_encryption
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('company.index.location') }}">Locations<span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     location_on
                                 </span></a>
                         </li>
@@ -185,41 +188,41 @@
                 </div>
                 <li>
                     <a href="{{ route('user.dashboard') }}">Dashboard <span
-                            class="material-icons align-middle float-right">
+                            class="material-icons align-middle float-end">
                             dashboard
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('index') }}">Homepage <span class="material-icons align-middle float-right">
+                    <a href="{{ route('index') }}">Homepage <span class="material-icons align-middle float-end">
                             home
                         </span></a>
                 </li>
                 <li>
                     <a href="{{ route('user.notification') }}">Notification <span
-                            class="badge badge-primary">{{ auth()->user()->unreadNotifications()->count() }}</span><span
-                            class="material-icons align-middle float-right">
+                            class="badge badge-primary notification-badge">{{ auth()->user()->unreadNotifications()->count() }}</span><span
+                            class="material-icons align-middle float-end">
                             notifications
                         </span></a>
                 </li>
                 <li>
-                    <a href="{{ route('user.reservation') }}">Reservations <span
-                            class="material-icons align-middle float-right">
+                    <a href="{{ route('user.index.booking') }}">Booking<span
+                            class="material-icons align-middle float-end">
                             book_online
                         </span></a>
                 </li>
                 <li>
-                    <a href="#profile" data-toggle="collapse" aria-expanded="false"
+                    <a href="#profile" data-bs-toggle="collapse" aria-expanded="false"
                         class="dropdown-toggle">Profile</a>
                     <ul class="collapse list-unstyled" id="profile">
                         <li>
                             <a href="{{ route('user.edit.profile', ['id' => Crypt::encrypt(auth()->user()->id)]) }}">Edit
-                                Profile <span class="material-icons align-middle float-right">
+                                Profile <span class="material-icons align-middle float-end">
                                     edit
                                 </span></a>
                         </li>
                         <li>
                             <a href="{{ route('user.index.credential') }}">Credentials <span
-                                    class="material-icons align-middle float-right">
+                                    class="material-icons align-middle float-end">
                                     enhanced_encryption
                                 </span></a>
                         </li>
@@ -243,8 +246,8 @@
         </div>
     @endif
 @endif
-<div id="content">
-    <button type="button" id="sidebarCollapse" class="navbar-btn border-0 mr-3">
+<div id="hamburger">
+    <button type="button" id="sidebarCollapse" class="navbar-btn border-0">
         <span></span>
         <span></span>
         <span></span>

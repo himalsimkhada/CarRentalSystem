@@ -170,6 +170,9 @@ button.logout:hover {
     transition: all 0.3s;
 }
 
+/* .hamburger {
+} */
+
 .back-to-top {
     position: fixed;
     bottom: 25px;

@@ -22,13 +22,13 @@ class BookingType extends Model
         'count_reservation',
     ];
 
-    public function book()
+    public function bookings()
     {
         return $this->hasMany(Booking::class);
     }
 
-    public function car()
+    public function cars()
     {
-        return $this->hasMany(Car::class);
+        return $this->hasMany(Car::class, 'booking_type_id');
     }
 }

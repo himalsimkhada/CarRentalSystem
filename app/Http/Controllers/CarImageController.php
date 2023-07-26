@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\CarImage;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -16,11 +17,12 @@ class CarImageController extends Controller
      */
     public function store(Request $request)
     {
+        $car = Car::findOrFail($request->input('id'));
         $getImage = $request->file('image');
         $extension = $getImage->extension();
         $img = Image::make($getImage)->fit(150);
-        $path = public_path('images\car\images');
-        $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
+        $path = public_path('images/car/images');
+        $filename = $car->plate_number . '-' . $request->input('model') . '_' . time() . '.' . $extension;
         $img->save($path . '/' . $filename);
 
         $validatedData = $request->validate([
@@ -29,7 +31,7 @@ class CarImageController extends Controller
 
         $values = [
             'image' => $filename,
-            'car_id' => $request->get('id')
+            'car_id' => $car->id,
         ];
 
         CarImage::insert($values);

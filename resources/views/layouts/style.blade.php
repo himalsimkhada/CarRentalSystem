@@ -1,6 +1,3 @@
-    {{-- CSS Files --}}
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link
@@ -9,6 +6,3 @@
 
     {{-- Icons --}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    {{-- JS Files --}}
-    <script src="{{ asset('js/app.js') }}"></script>

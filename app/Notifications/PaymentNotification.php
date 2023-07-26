@@ -28,7 +28,7 @@ class PaymentNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
@@ -54,9 +54,6 @@ class PaymentNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'firstname' => $this->user->firstname,
-            'lastname' => $this->user->lastname,
-            'username' => $this->user->username,
             'email' => $this->user->email,
         ];
     }

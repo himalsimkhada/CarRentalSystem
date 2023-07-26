@@ -65,3 +65,4 @@ class Kernel extends HttpKernel
         'user_type' => \App\Http\Middleware\UserType::class,
     ];
 }
+    

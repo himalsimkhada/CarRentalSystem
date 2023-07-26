@@ -22,11 +22,11 @@
             <div class="row">
                 <div class="col-3">
                     <div class="card">
-                        <img src="{{ file_exists(public_path('/images/company/profile_images/' . $company->logo)) ? asset('/images/company/profile_images/' . $company->logo) : asset('/images/company/profile_images/default.png') }}"
+                        <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo))? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
                             alt=""
-                            class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}">
+                            class="img-thumbnail">
                         <div class="card-body">
-                            <input type="file" name="logo" id="" class="border-0 form-control">
+                            <input type="file" name="logo" id="" class="form-control">
                             <div class="invalid-tooltip">
                                 Please provide a Company Logo.
                             </div>
@@ -38,15 +38,15 @@
                         <div class="card-body">
                             <h4 class="card-title">Informations</h4>
                             <hr>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="">Name</label>
                                 <input type="text" class="form-control" name="name" value="{{ $company['name'] }}">
                             </div>
-                            <div class="form-group">
-                                <label>Description</label>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
                                 <textarea class="form-control" name="description">{{ $company['description'] }}</textarea>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col">
                                         <label class="">Address</label>
@@ -60,15 +60,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Registration Number</label>
+                            <div class="mb-3">
+                                <label class="form-label">Registration Number</label>
                                 <input type="text" name="registration_number" class="form-control"
                                     value="{{ $company['registration_number'] }}">
                             </div>
-                            <div class="form-group">
-                                <label>E-mail</label>
+                            <div class="mb-3">
+                                <label class="form-label">E-mail</label>
                                 <input type="email" name="email" class="form-control" value="{{ $company['email'] }}"
-                                   {{ auth()->check() ? '' : 'readonly' }}>
+                                    {{ auth()->check() ? '' : 'readonly' }}>
                                 <small class="form-text text-muted">Contact admin to change your email
                                     address.</small>
                             </div>
@@ -76,7 +76,7 @@
                                 <small class="d-inline-block form-text text-muted">Clicking submit will
                                     update your
                                     profile data.</small>
-                                <button type="submit" class="d-inline-block btn btn-primary float-right">Submit</button>
+                                <button type="submit" class="d-inline-block btn btn-primary float-end">Submit</button>
                             </div>
                         </div>
                     </div>

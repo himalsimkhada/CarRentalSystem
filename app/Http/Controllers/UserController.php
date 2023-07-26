@@ -25,49 +25,10 @@ class UserController extends Controller
     }
     public function dashboard()
     {
-        $id = auth()->user()->id;
+        $user = auth()->user();
+        $credentials = $user->credentials;
 
-        $user = User::with('credentials')->where('id', $id)->first();
-
-        $credentials = UserCredential::with('user')->where('user_id', $id)->get();
-
-        return view('/user/dashboard', ['user' => $user, 'credentials' => $credentials]);
-    }
-
-    public function reservation()
-    {
-        $user_id = auth()->user()->id;
-
-        $srtPaid = Booking::select('cars.id AS car_id', 'bookings.id AS booking_id', 'users.email AS user_email', 'booking_types.name AS type_name', 'cars.model', 'bookings.date', 'bookings.return_date', 'bookings.final_cost', 'bookings.payment')
-            ->join('cars', 'cars.id', '=', 'bookings.car_id')
-            ->join('booking_types', 'booking_types.id', '=', 'bookings.booking_type_id')
-            ->join('users', 'users.id', '=', 'bookings.user_id')
-            ->join('locations', 'locations.id', '=', 'bookings.location_id')
-            ->join('companies', 'companies.id', '=', 'cars.company_id')
-            ->where('users.id', '=', $user_id)
-            ->orderBy('payment', 'DESC')
-            ->get();
-
-        $srtUnpaid = Booking::select('cars.id AS car_id', 'bookings.id AS booking_id', 'users.email AS user_email', 'booking_types.name AS type_name', 'cars.model', 'bookings.date', 'bookings.return_date', 'bookings.final_cost', 'bookings.payment')
-            ->join('cars', 'cars.id', '=', 'bookings.car_id')
-            ->join('booking_types', 'booking_types.id', '=', 'bookings.booking_type_id')
-            ->join('users', 'users.id', '=', 'bookings.user_id')
-            ->join('locations', 'locations.id', '=', 'bookings.location_id')
-            ->join('companies', 'companies.id', '=', 'cars.company_id')
-            ->where('users.id', '=', $user_id)
-            ->orderBy('payment', 'ASC')
-            ->get();
-
-        $reservation_details = Booking::select('cars.id AS car_id', 'bookings.id AS booking_id', 'users.email AS user_email', 'booking_types.name AS type_name', 'cars.model', 'bookings.date', 'bookings.return_date', 'bookings.final_cost', 'bookings.payment')
-            ->join('cars', 'cars.id', '=', 'bookings.car_id')
-            ->join('booking_types', 'booking_types.id', '=', 'bookings.booking_type_id')
-            ->join('users', 'users.id', '=', 'bookings.user_id')
-            ->join('locations', 'locations.id', '=', 'bookings.location_id')
-            ->join('companies', 'companies.id', '=', 'cars.company_id')
-            ->where('users.id', '=', $user_id)
-            ->get();
-
-        return view('/user/reservation', ['reservations' => $reservation_details, 'srtUnpaid' => $srtUnpaid, 'srtPaid' => $srtPaid]);
+        return view('user.dashboard', ['user' => $user, 'credentials' => $credentials]);
     }
 
     public function edit($id)

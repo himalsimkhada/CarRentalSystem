@@ -68,51 +68,51 @@
                 </div>
                 <div class="col-md-9">
                     <div class="contact-form">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="col-sm-10">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="name">Company Name</label>
                                     <input type="text" class="form-control" name="company_name" id="name"
                                         aria-describedby="helpId" placeholder="" required>
                                     <small id="helpId" class="form-text text-muted">Please provide company name.
                                         (required)</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="address">Address</label>
                                     <input type="text" class="form-control" name="company_address" id="address"
                                         aria-describedby="helpId" placeholder="" required>
                                     <small id="helpId" class="form-text text-muted">Please provide company full
                                         address. (required)</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="contact">Contact</label>
                                     <input type="text" class="form-control" name="company_contact" id="contact"
                                         aria-describedby="helpId" placeholder="" required>
                                     <small id="helpId" class="form-text text-muted">Please provide company contact.
                                         (required)</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="reg_id">Registration ID</label>
                                     <input type="text" class="form-control" name="company_reg" id="reg_id"
                                         aria-describedby="helpId" placeholder="" required>
                                     <small id="helpId" class="form-text text-muted">Please provide company registration id.
                                         (required)</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" name="company_email" id="email"
                                         aria-describedby="helpId" placeholder="" required>
                                     <small id="helpId" class="form-text text-muted">Please provide company Email.
                                         (required)</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="description">Description</label>
                                     <textarea class="form-control" name="company_description" id="description"
                                         rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" class="btn btn-default">Submit</button>
                             </div>

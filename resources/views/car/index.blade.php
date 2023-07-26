@@ -15,11 +15,19 @@
             </div>
         </div>
     </div>
-
+    @php
+        $url = auth()
+            ->guard('company')
+            ->check()
+            ? route('company.delete.car', ':id')
+            : (auth()->check()
+                ? route('admin.delete.car', ':id')
+                : null);
+    @endphp
     <script>
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');
-            var url = "{{ route('admin.delete.car', ':id') }}";
+            var url = "{{ $url }}";
             url = url.replace(':id', id)
             Swal.fire({
                 title: 'Are you sure?',
@@ -44,7 +52,6 @@
                                 )
                                 $('#cars-table').DataTable().ajax.reload();
                             } else {
-                                console.log(response);
                                 Swal.fire(
                                     'Error!',
                                     'Error deleting!',
@@ -54,6 +61,54 @@
                         },
                         error: function(response) {
                             console.log(response);
+                        }
+                    })
+                }
+            })
+        });
+
+        $(document).on('click', '#image', function() {
+            var id = $(this).data('id');
+            var url = "{{ route('company.car.store.image') }}"
+            // url = url.replace(':id', id);
+            // url = url.replace(':user_id', user_id);
+            Swal.fire({
+                title: 'Upload an image for car!',
+                input: 'file',
+                inputAttributes: {
+                    'accept': 'image/*',
+                    'aria-label': 'Upload your profile picture'
+                },
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.value) {
+                    var formData = new FormData();
+                    formData.append('image', result.value);
+                    formData.append('id', id)
+
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        method: 'post',
+                        url: url,
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        beforeSend: function() {
+                            Swal.fire({
+                                title: 'Uploading image.....',
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            })
+                        },
+                        success: function(response) {
+                            Swal.fire('Uploading successful.');
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            Swal.fire('Process failed. Try again....');
                         }
                     })
                 }

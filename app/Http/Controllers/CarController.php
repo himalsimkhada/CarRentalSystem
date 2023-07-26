@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\DataTables\CarsDataTable;
 use App\Models\BookingType;
 use App\Models\Car;
-use App\Models\CarImage;
-use App\Models\Company;
-use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
@@ -25,68 +22,10 @@ class CarController extends Controller
         return $dataTable->render('car.index');
     }
 
-    public function getDetail(Request $request)
-    {
-        $booking_type_list = BookingType::all();
-        $locations = Location::all();
-
-        $car_id = $request->get('car-id');
-        $pick_date = $request->get('date');
-        $drop_date = $request->get('return');
-        $type = $request->get('type');
-
-        $get_type = Car::with('type')->where('id', '=', $car_id)->first()->type->name;
-
-        $cars = Car::with(['company', 'type', 'image'])->where('id', '=', $car_id)->get();
-
-        $images = CarImage::with('car')->where('car_id', '=', $car_id)->get();
-
-        return view('car-detail', ['car_detail' => $cars, 'pickdate' => $pick_date, 'dropdate' => $drop_date, 'bookingtype' => $type, 'types' => $booking_type_list, 'type_name' => $get_type, 'images' => $images, 'locations' => $locations]);
-    }
-
-    public function getCategory(Request $request, $id)
-    {
-        $getcars = Car::select('*')
-            ->join('booking_types', 'booking_types.id', '=', 'cars.booking_type_id')
-            ->where('booking_types.id', '=', $id)
-            ->get();
-
-        $srtpricedesc = BookingType::select('*')
-            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
-            ->where('booking_types.id', '=', $id)
-            ->orderBy('booking_types.cost', 'DESC')
-            ->get();
-
-        $srtpriceasc = BookingType::select('*')
-            ->join('cars', 'cars.booking_type_id', '=', 'booking_types.id')
-            ->where('booking_types.id', '=', $id)
-            ->orderBy('booking_types.cost', 'ASC')
-            ->get();
-
-        $location = $request->get('search-location');
-
-        $searchLoc = Car::select('*')
-            ->join('booking_types', 'booking_types.id', '=', 'cars.booking_type_id')
-            ->join('companies', 'companies.id', '=', 'cars.company_id')
-            ->join('locations', 'locations.company_id', 'companies.id')
-            ->where('locations.location', 'LIKE', '%' . $location . '%')
-            ->where('booking_types.id', '=', $id)
-            ->get();
-
-        return view('car-list-category', ['lists' => $getcars, 'pricedesc' => $srtpricedesc, 'priceasc' => $srtpriceasc, 'location' => $searchLoc]);
-    }
-
-    public function addview()
-    {
-        // $list = Car::with('type')->get();
-        $list = BookingType::all();
-        return view('company.add-car', ['lists' => $list]);
-    }
-
     public function create()
     {
         $car = new Car();
-        $car->load('type');
+        $car->load('bookingType');
         $types = BookingType::all();
 
         return view('car.create-edit', ['car' => $car, 'types' => $types]);
@@ -106,13 +45,6 @@ class CarController extends Controller
             $availability = 1;
         }
 
-        $getImage = $request->file('primary_image');
-        $extension = $getImage->extension();
-        $img = Image::make($getImage)->fit(300);
-        $path = public_path('images/car/images');
-        $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $img->save($path . '/' . $filename);
-
         $validatedData = $request->validate([
             'model' => 'required|string',
             'model_year' => 'required',
@@ -122,6 +54,13 @@ class CarController extends Controller
             'primary_image' => 'required|image',
             'booking_type_id' => 'required',
         ]);
+        $getImage = $request->file('primary_image');
+        $extension = $getImage->extension();
+        $img = Image::make($getImage)->fit(300);
+        $path = public_path('images/car/images');
+        $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
+        $img->save($path . '/' . $filename);
+
         $company_id = auth()->guard('company')->user()->id;
 
         $values = [
@@ -145,7 +84,7 @@ class CarController extends Controller
     public function edit($id)
     {
         $id = Crypt::decrypt($id);
-        $car = Car::with('type')->where('id', '=', $id)->first();
+        $car = Car::with('bookingType')->where('id', '=', $id)->first();
         $types = BookingType::all();
 
         return view('car.create-edit', ['car' => $car, 'types' => $types]);
@@ -216,8 +155,6 @@ class CarController extends Controller
     public function destroy(Car $car, $id)
     {
         $response = $car->where('id', $id)->delete();
-
-        // return redirect()->back()->with('alert', 'Car successfully deleted.');
         return response()->json($response);
     }
 }

@@ -23,15 +23,21 @@ class CarsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $editbutton = "<div class='btn-group'><a href='" . route('company.edit.car', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary btn-sm'><span class='material-icons'>edit</span></a>";
+                $editbutton = "<a href='" . route('company.edit.car', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary btn-sm'><span class='material-icons'>edit</span></a>";
                 $deletebtn = "<a class='btn btn-danger' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
         delete
-    </span></a></div>";
+    </span></a>";
+                $addimgbtn = "<a class='btn btn-info' data-id='" . $row->id . "' id='image'><span class='material-icons'>
+                add
+            </span></a>";
+
                 if (auth()->guard('company')->check()) {
-                    return $editbutton . $deletebtn;
+                    $btns = $editbutton . $addimgbtn . $deletebtn;
                 } else {
-                    return $deletebtn;
+                    $btns = $deletebtn;
                 }
+
+                return "<div class='btn-group'>" . $btns . "</div>";
             })
             ->setRowId('id');
     }

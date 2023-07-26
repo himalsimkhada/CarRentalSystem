@@ -19,8 +19,10 @@ class CreatePartnerReqsTable extends Migration
             $table->string('company_description')->nullable();
             $table->string('company_address');
             $table->string('company_contact');
-            $table->string('company_reg');
+            $table->string('registration_number');
             $table->string('company_email');
+            $table->string('status');
+            $table->timestamps();
         });
     }
 
