@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\DataTables\CarsDataTable;
 use App\Models\BookingType;
 use App\Models\Car;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 
 class CarController extends Controller
@@ -37,7 +41,7 @@ class CarController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         if ($request->input('availability') == null) {
             $availability = 0;
@@ -45,40 +49,59 @@ class CarController extends Controller
             $availability = 1;
         }
 
-        $validatedData = $request->validate([
-            'model' => 'required|string',
-            'model_year' => 'required',
-            'brand' => 'required|string',
-            'color' => 'required|string',
-            'plate_number' => 'required|string|unique:cars',
-            'primary_image' => 'required|image',
-            'booking_type_id' => 'required',
-        ]);
-        $getImage = $request->file('primary_image');
-        $extension = $getImage->extension();
-        $img = Image::make($getImage)->fit(300);
-        $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $path = 'images/car/images/' . $filename;
-        $img->save(public_path($path));
+        try {
+            $validatedData = $request->validate([
+                'model' => 'required|string',
+                'model_year' => 'required',
+                'brand' => 'required|string',
+                'color' => 'required|string',
+                'plate_number' => 'required|string|unique:cars',
+                'primary_image' => 'required|image',
+                'booking_type_id' => 'required',
+            ]);
 
-        $company_id = auth()->guard('company')->user()->id;
+            $getImage = $request->file('primary_image');
+            $extension = $getImage->extension();
+            $img = Image::make($getImage)->fit(300);
+            $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
+            $path = 'images/car/images/' . $filename;
+            $img->save(public_path($path));
 
-        $values = [
-            'model' => $request->input('model'),
-            'description' => $request->input('description'),
-            'model_year' => $request->input('model_year'),
-            'brand' => $request->input('brand'),
-            'color' => $request->input('color'),
-            'plate_number' => $request->input('plate_number'),
-            'availability' => $availability,
-            'primary_image' => $path,
-            'company_id' => $company_id,
-            'booking_type_id' => $request->input('booking_type_id'),
-        ];
+            $company_id = auth()->guard('company')->user()->id;
 
-        Car::insert($values);
+            $values = [
+                'model' => $request->input('model'),
+                'description' => $request->input('description'),
+                'model_year' => $request->input('model_year'),
+                'brand' => $request->input('brand'),
+                'color' => $request->input('color'),
+                'plate_number' => $request->input('plate_number'),
+                'availability' => $availability,
+                'primary_image' => $path,
+                'company_id' => $company_id,
+                'booking_type_id' => $request->input('booking_type_id'),
+            ];
 
-        return redirect()->back()->with(['type' => 'success', 'message' => 'New car added successfully.']);
+            DB::beginTransaction();
+
+            Car::insert($values);
+
+            DB::commit();
+
+            return redirect()->back()->with(['type' => 'success', 'message' => 'New car added successfully.']);
+        } catch (ValidationException $e) {
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while adding a new car: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while adding a new car: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while adding a new car. Please try again later.']);
+        }
     }
 
     public function edit($id)
@@ -96,54 +119,67 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $id = Crypt::decrypt($request->input('id'));
         $company_id = auth()->guard('company')->user()->id;
 
-        if ($request->input('availability') == null) {
-            $availability = 0;
-        } else {
-            $availability = 1;
-        }
+        $availability = $request->input('availability') === null ? 0 : 1;
+
         $getImg = $request->file('primary_image');
 
-        $validatedData = $request->validate([
-            'model' => 'required|string',
-            'model_year' => 'required',
-            'brand' => 'required|string',
-            'color' => 'required|string',
-            'plate_number' => 'required|string|' . Rule::unique('cars')->ignore($id),
-            'booking_type_id' => 'required|' . Rule::unique('cars')->ignore($id),
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'model' => 'required|string',
+                'model_year' => 'required',
+                'brand' => 'required|string',
+                'color' => 'required|string',
+                'plate_number' => 'required|string|' . Rule::unique('cars')->ignore($id),
+                'booking_type_id' => 'required|' . Rule::unique('cars')->ignore($id),
+            ]);
 
-        $values = [
-            'model' => $request->input('model'),
-            'description' => $request->input('description'),
-            'model_year' => $request->input('model_year'),
-            'brand' => $request->input('brand'),
-            'color' => $request->input('color'),
-            'plate_number' => $request->input('plate_number'),
-            'availability' => $availability,
-            'company_id' => $company_id,
-            'booking_type_id' => $request->input('booking_type_id'),
-        ];
+            $values = [
+                'model' => $request->input('model'),
+                'description' => $request->input('description'),
+                'model_year' => $request->input('model_year'),
+                'brand' => $request->input('brand'),
+                'color' => $request->input('color'),
+                'plate_number' => $request->input('plate_number'),
+                'availability' => $availability,
+                'company_id' => $company_id,
+                'booking_type_id' => $request->input('booking_type_id'),
+            ];
 
-        if ($getImg) {
-            $extension = $getImg->extension();
-            $img = Image::make($getImg)->fit(250);
-            $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-            $path = 'images/car/images/' . $filename;
-            $img->save(public_path($path));
+            if ($getImg) {
+                $extension = $getImg->extension();
+                $img = Image::make($getImg)->fit(250);
+                $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
+                $path = 'images/car/images/' . $filename;
+                $img->save(public_path($path));
 
-            $values = ['primary_image' => $path];
+                $values['primary_image'] = $path;
+            }
 
-            Car::where('id', '=', $id)->update($values);
+            DB::beginTransaction();
+
+            Car::where('id', $id)->update($values);
+
+            DB::commit();
+
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Car successfully edited.']);
+        } catch (ValidationException $e) {
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while editing the car: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while editing the car: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while editing the car. Please try again later.']);
         }
-
-        Car::where('id', '=', $id)->update($values);
-
-        return redirect()->back()->with(['type' => 'success', 'message' => 'Car successfully edited.']);
     }
 
     /**

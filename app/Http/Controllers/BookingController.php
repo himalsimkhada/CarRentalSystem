@@ -7,6 +7,7 @@ use App\Events\BookingEvent;
 use App\Models\Booking;
 use App\Models\BookingType;
 use App\Models\Car;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function storeFromIndex(Request $request)
+    public function storeFromIndex(Request $request): RedirectResponse
     {
         $user = auth()->user();
         $userId = $user->id;
@@ -84,7 +85,7 @@ class BookingController extends Controller
         }
     }
 
-    public function storeFromList(Request $request)
+    public function storeFromList(Request $request): RedirectResponse
     {
         $user = auth()->user();
         $userId = $user->id;

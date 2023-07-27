@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\DataTables\PartnerReqsDataTable;
 use App\Models\PartnerReq;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PartnerReqController extends Controller
 {
@@ -64,30 +68,52 @@ class PartnerReqController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        $validatedData = $request->validate([
-            'company_name' => 'required|string|unique:companies,name',
-            'company_contact' => 'required|string',
-            'company_address' => 'required|string',
-            'registration_number' => 'required|string|unique:companies,registration_number',
-            'company_email' => 'required|string|unique:companies,email',
-        ]);
+            $validatedData = $request->validate([
+                'company_name' => 'required|string|unique:companies,name',
+                'company_contact' => 'required|string',
+                'company_address' => 'required|string',
+                'registration_number' => 'required|string|unique:companies,registration_number',
+                'company_email' => 'required|string|unique:companies,email',
+            ]);
 
-        $values = [
-            'company_name' => $request->input('company_name'),
-            'company_description' => $request->input('company_description'),
-            'company_address' => $request->input('company_address'),
-            'company_contact' => $request->input('company_contact'),
-            'registration_number' => $request->input('registration_number'),
-            'company_email' => $request->input('company_email'),
-            'status' => 'waiting',
-        ];
+            DB::beginTransaction();
 
-        PartnerReq::insert($values);
+            $values = [
+                'company_name' => $request->input('company_name'),
+                'company_description' => $request->input('company_description'),
+                'company_address' => $request->input('company_address'),
+                'company_contact' => $request->input('company_contact'),
+                'registration_number' => $request->input('registration_number'),
+                'company_email' => $request->input('company_email'),
+                'status' => 'waiting',
+            ];
 
-        return redirect()->back()->with(['type' => 'success', 'message' => 'Thank you. We will get to you soon.']);
+            // Insert the data into the PartnerReq table
+            PartnerReq::insert($values);
+
+            DB::commit();
+
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Thank you. We will get to you soon.']);
+        } catch (ValidationException $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while storing the partner request: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while storing the partner request: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while processing the partner request. Please try again later.']);
+        }
     }
+
 }

@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\DataTables\UserCredentialsDataTable;
 use App\Models\UserCredential;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class UserCredentialController extends Controller
 {
@@ -31,38 +35,59 @@ class UserCredentialController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $user = auth()->user();
-        if ($request->hasFile('file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
-                $validate_file = $request->validate([
-                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192',
-                ]);
+        try {
+            $user = auth()->user();
+            if ($request->hasFile('file') && $request->hasFile('image')) {
+                if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
+                    $validate_file = $request->validate([
+                        'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                        'image' => 'mimes:jpg,png,jpeg|max:8192',
+                    ]);
 
-                $extension_file = $validate_file['file']->extension();
-                $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
+                    DB::beginTransaction();
 
-                $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
+                    $extension_file = $validate_file['file']->extension();
+                    $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
 
-                $values = [
-                    'name' => $request->input('name'),
-                    'file' => $file,
-                    'image' => $image,
-                    'reg_number' => $request->input('reg_number'),
-                    'user_id' => $user->id,
-                ];
+                    $extension_image = $validate_file['image']->extension();
+                    $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
 
-                UserCredential::insert($values);
+                    $values = [
+                        'name' => $request->input('name'),
+                        'file' => $file,
+                        'image' => $image,
+                        'reg_number' => $request->input('reg_number'),
+                        'user_id' => $user->id,
+                    ];
 
-                return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials added successfully']);
+                    // Insert the data into the UserCredential table
+                    UserCredential::insert($values);
+
+                    DB::commit();
+
+                    return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials added successfully']);
+                } else {
+                    return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                }
             } else {
-                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                return redirect()->back()->with(['type' => 'error', 'message' => 'No files selected.']);
             }
-        } else {
-            return redirect()->back()->with(['type' => 'error', 'message' => 'No files seleted.']);
+        } catch (ValidationException $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while storing the user credentials: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while storing the user credentials: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while storing the user credentials. Please try again later.']);
         }
     }
 
@@ -79,47 +104,74 @@ class UserCredentialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
-        $id = Crypt::decrypt($request->input('id'));
-        $user = auth()->user();
-        if ($request->hasFile('file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
-                $validate_file = $request->validate([
-                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192',
-                ]);
+        try {
+            $id = Crypt::decrypt($request->input('id'));
+            $user = auth()->user();
 
-                $extension_file = $validate_file['file']->extension();
-                $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
+            if ($request->hasFile('file') && $request->hasFile('image')) {
+                if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
+                    $validate_file = $request->validate([
+                        'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                        'image' => 'mimes:jpg,png,jpeg|max:8192',
+                    ]);
 
-                $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
+                    DB::beginTransaction();
+
+                    $extension_file = $validate_file['file']->extension();
+                    $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
+
+                    $extension_image = $validate_file['image']->extension();
+                    $image = $validate_file['image']->storeAs('/', $user->username . '_' . time() . '.' . $extension_image, 'user_credentials_images');
+
+                    $values = [
+                        'name' => $request->input('name'),
+                        'file' => $file,
+                        'image' => $image,
+                        'reg_number' => $request->input('reg_number'),
+                        'user_id' => $user->id,
+                    ];
+
+                    // Update the UserCredential record with the new file and image
+                    UserCredential::where('id', '=', $id)->update($values);
+
+                    DB::commit();
+
+                    return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials edited successfully']);
+                } else {
+                    return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                }
+            } else {
+                DB::beginTransaction();
 
                 $values = [
                     'name' => $request->input('name'),
-                    'file' => $file,
-                    'image' => $image,
                     'reg_number' => $request->input('reg_number'),
                     'user_id' => $user->id,
                 ];
 
-                UserCredential::where('id', '=', $id)->update($values);
+                // Update the UserCredential record without modifying the file and image
+                UserCredential::where('id', $id)->update($values);
 
-                return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials added successfully']);
-            } else {
-                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                DB::commit();
+
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials edited successfully']);
             }
-        } else {
-            $values = [
-                'name' => $request->input('name'),
-                'reg_number' => $request->input('reg_number'),
-                'user_id' => $user->id,
-            ];
+        } catch (ValidationException $e) {
+            DB::rollback();
 
-            UserCredential::where('id', $id)->update($values);
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while updating the user credentials: $errorMessage");
 
-            return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials edited successfully']);
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while updating the user credentials: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while updating the user credentials. Please try again later.']);
         }
     }
 

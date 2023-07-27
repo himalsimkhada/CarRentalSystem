@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\DataTables\CompaniesDataTable;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 
 class CompanyController extends Controller
@@ -51,29 +55,48 @@ class CompanyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|unique:companies',
-            'contact' => 'required|string',
-            'address' => 'required|string',
-            'registration_number' => 'required|string|unique:companies',
-            'email' => 'required|string|unique:companies',
-        ]);
-        $values = [
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'address' => $request->input('address'),
-            'contact' => $request->input('contact'),
-            'registration_number' => $request->input('registration_number'),
-            'email' => $request->input('email'),
-        ];
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|unique:companies',
+                'contact' => 'required|string',
+                'address' => 'required|string',
+                'registration_number' => 'required|string|unique:companies',
+                'email' => 'required|string|unique:companies',
+            ]);
 
-        User::where('id', '=', $request->input('owner_id'))->update(['user_type' => 2]);
+            $values = [
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'address' => $request->input('address'),
+                'contact' => $request->input('contact'),
+                'registration_number' => $request->input('registration_number'),
+                'email' => $request->input('email'),
+            ];
 
-        Company::insert($values);
+            DB::beginTransaction();
 
-        return redirect()->back()->with(['type' => 'success', 'message' => 'Company added successfully.']);
+            User::where('id', '=', $request->input('owner_id'))->update(['user_type' => 2]);
+
+            Company::insert($values);
+
+            DB::commit();
+
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Company added successfully.']);
+        } catch (ValidationException $e) {
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while adding the company: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while adding the company: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while adding the company. Please try again later.']);
+        }
     }
 
     public function edit($id)
@@ -90,42 +113,57 @@ class CompanyController extends Controller
      * @param  \App\Models\CarCompany  $carCompany
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $detail = Company::where('id', Crypt::decrypt(request()->get('id')))->first();
 
-        $validatedData = $request->validate([
-            'name' => 'required|string|' . Rule::unique('companies')->ignore($detail->id),
-            'contact' => 'required|string',
-            'address' => 'required|string',
-            'registration_number' => 'required|string|' . Rule::unique('companies')->ignore($detail->id),
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|' . Rule::unique('companies')->ignore($detail->id),
+                'contact' => 'required|string',
+                'address' => 'required|string',
+                'registration_number' => 'required|string|' . Rule::unique('companies')->ignore($detail->id),
+            ]);
 
-        $getImg = $request->file('logo');
+            $getImg = $request->file('logo');
 
-        $values = [
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'address' => $request->input('address'),
-            'contact' => $request->input('contact'),
-            'registration_number' => $request->input('registration_number'),
-        ];
+            $values = [
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'address' => $request->input('address'),
+                'contact' => $request->input('contact'),
+                'registration_number' => $request->input('registration_number'),
+            ];
 
-        if ($getImg) {
-            $extension = $getImg->extension();
-            $img = Image::make($getImg)->fit(250);
-            $filename = $detail->name . '_' . $detail->registration_number . '.' . $extension;
-            $path = 'images/company/profile_images/'.$filename;
-            $img->save(public_path($path));
+            if ($getImg) {
+                $extension = $getImg->extension();
+                $img = Image::make($getImg)->fit(250);
+                $filename = $detail->name . '_' . $detail->registration_number . '.' . $extension;
+                $path = 'images/company/profile_images/' . $filename;
+                $img->save(public_path($path));
 
-            $values = ['logo' => $path];
+                $values['logo'] = $path;
+            }
 
+            DB::beginTransaction();
             Company::where('id', $detail->id)->update($values);
+
+            DB::commit();
+
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Company successfully edited']);
+        } catch (ValidationException $e) {
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while editing the company: $errorMessage");
+
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while editing the company: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while editing the company. Please try again later.']);
         }
-
-        Company::where('id', '=', $detail->id)->update($values);
-
-        return redirect()->back()->with(['type' => 'success', 'message' => 'Company successfully edited']);
     }
 
     /**

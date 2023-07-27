@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\DataTables\CompanyCredentialsDataTable;
 use App\Models\CompanyCredential;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class CompanyCredentialController extends Controller
 {
@@ -31,33 +35,53 @@ class CompanyCredentialController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    public function store(Request $request): RedirectResponse
     {
         $company_id = auth()->guard('company')->user()->id;
         if ($request->hasFile('file') && $request->hasFile('image')) {
             if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
-                $validate_file = $request->validate([
-                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192',
-                ]);
+                try {
+                    $validate_file = $request->validate([
+                        'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                        'image' => 'mimes:jpg,png,jpeg|max:8192',
+                    ]);
 
-                $extension_file = $validate_file['file']->extension();
-                $file = $validate_file['file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'company_credentials');
+                    $extension_file = $validate_file['file']->extension();
+                    $file = $validate_file['file']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_file, 'company_credentials');
 
-                $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'company_credentials_images');
+                    $extension_image = $validate_file['image']->extension();
+                    $image = $validate_file['image']->storeAs('/', auth()->user()->username . '_' . time() . '.' . $extension_image, 'company_credentials_images');
 
-                $values = [
-                    'name' => $request->input('name'),
-                    'file' => $file,
-                    'image' => $image,
-                    'reg_number' => $request->input('reg_number'),
-                    'company_id' => $company_id,
-                ];
+                    $values = [
+                        'name' => $request->input('name'),
+                        'file' => $file,
+                        'image' => $image,
+                        'reg_number' => $request->input('reg_number'),
+                        'company_id' => $company_id,
+                    ];
 
-                CompanyCredential::insert($values);
+                    DB::beginTransaction();
 
-                return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
+                    // Perform the data insertion
+                    CompanyCredential::insert($values);
+
+                    DB::commit();
+
+                    return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
+                } catch (ValidationException $e) {
+                    $errorMessage = $e->getMessage();
+                    Log::error("Validation error occurred while adding the credential: $errorMessage");
+
+                    throw $e;
+                } catch (\Throwable $e) {
+                    DB::rollback();
+
+                    $errorMessage = $e->getMessage();
+                    Log::error("Error occurred while adding the credential: $errorMessage");
+
+                    return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while adding the credential. Please try again later.']);
+                }
             } else {
                 return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
             }
@@ -79,47 +103,70 @@ class CompanyCredentialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $id = Crypt::decrypt($request->input('id'));
         $company = auth()->guard('company')->user();
-        if ($request->hasFile('file') && $request->hasFile('image')) {
-            if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
-                $validate_file = $request->validate([
-                    'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
-                    'image' => 'mimes:jpg,png,jpeg|max:8192',
-                ]);
 
-                $extension_file = $validate_file['file']->extension();
-                $file = $validate_file['file']->storeAs('/', $company->name . '_' . time() . '.' . $extension_file, 'company_credentials');
+        try {
+            DB::beginTransaction();
 
-                $extension_image = $validate_file['image']->extension();
-                $image = $validate_file['image']->storeAs('/', $company->name . '_' . time() . '.' . $extension_image, 'company_credentials_images');
+            if ($request->hasFile('file') && $request->hasFile('image')) {
+                if ($request->file('image')->isValid() && $request->file('file')->isValid()) {
+                    $validate_file = $request->validate([
+                        'file' => 'mimes:txt,csv,doc,pdf,docx|max:8192',
+                        'image' => 'mimes:jpg,png,jpeg|max:8192',
+                    ]);
 
+                    $extension_file = $validate_file['file']->extension();
+                    $file = $validate_file['file']->storeAs('/', $company->name . '_' . time() . '.' . $extension_file, 'company_credentials');
+
+                    $extension_image = $validate_file['image']->extension();
+                    $image = $validate_file['image']->storeAs('/', $company->name . '_' . time() . '.' . $extension_image, 'company_credentials_images');
+
+                    $values = [
+                        'name' => $request->input('name'),
+                        'file' => $file,
+                        'image' => $image,
+                        'reg_number' => $request->input('reg_number'),
+                        'company_id' => $company->id,
+                    ];
+
+                    CompanyCredential::where('id', $id)->update($values);
+
+                    DB::commit();
+
+                    return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
+                } else {
+                    return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                }
+            } else {
                 $values = [
                     'name' => $request->input('name'),
-                    'file' => $file,
-                    'image' => $image,
                     'reg_number' => $request->input('reg_number'),
                     'company_id' => $company->id,
                 ];
 
                 CompanyCredential::where('id', $id)->update($values);
 
-                return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
-            } else {
-                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
+                DB::commit();
+
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Successfully edited.']);
             }
-        } else {
-            $values = [
-                'name' => $request->input('name'),
-                'reg_number' => $request->input('reg_number'),
-                'company_id' => $company->id,
-            ];
+        } catch (ValidationException $e) {
+            DB::rollback();
 
-            CompanyCredential::where('id', $id)->update($values);
+            $errorMessage = $e->getMessage();
+            Log::error("Validation error occurred while updating the credential: $errorMessage");
 
-            return redirect()->back()->with(['type' => 'success', 'message' => 'Successfully edited.']);
+            throw $e;
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error("Error occurred while updating the credential: $errorMessage");
+
+            return redirect()->back()->with(['type' => 'error', 'message' => 'An error occurred while updating the credential. Please try again later.']);
         }
     }
 
