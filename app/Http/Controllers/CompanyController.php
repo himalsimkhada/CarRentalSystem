@@ -112,7 +112,7 @@ class CompanyController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CarCompany  $carCompany
+     * @param  \App\Models\Company  $carCompany
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request): RedirectResponse
@@ -171,7 +171,7 @@ class CompanyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CarCompany  $carCompany
+     * @param  \App\Models\Company  $carCompany
      * @return \Illuminate\Http\Response
      */
     public function destroy(Company $carCompany, $id)
