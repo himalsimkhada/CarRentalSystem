@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="card">
-                        <img src="{{ file_exists(public_path('/images/profile_images/' . $user->profile_photo)) ? asset('/images/profile_images/' . $user->profile_photo) : asset('/images/profile_images/default.png') }}"
+                        <img src="{{ file_exists(public_path($user->profile_photo)) ? asset($user->profile_photo) : asset('/images/profile_images/default.png') }}"
                             alt=""
                             class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}">
                         <div class="card-body">

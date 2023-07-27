@@ -69,7 +69,7 @@
                 @foreach ($list as $lists)
                     <div class="col-sm-3 my-5">
                         <div class="card" style="width: 100%; min-height: 100%">
-                            <img src="{{ file_exists(asset('images/car/images/' . $lists->primary_image)) ? asset('images/car/images/' . $lists->primary_image) : asset('images/car/images/default.png') }}"
+                            <img src="{{ file_exists(asset($lists->primary_image)) ? asset($lists->primary_image) : asset('images/car/images/default.png') }}"
                                 class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $lists->model }}</h5>

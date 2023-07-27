@@ -10,12 +10,12 @@
                 <div id="carouselCarImage" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <img src="{{ file_exists(asset('images/car/images/' . $car->primary_image)) ? asset('images/car/images/' . $car->primary_image) : asset('images/car/images/default.png') }}"
+                            <img src="{{ file_exists(asset($car->primary_image)) ? asset($car->primary_image) : asset('images/car/images/default.png') }}"
                                 class="card-img-top" alt="...">
                         </div>
                         @foreach ($images as $image)
                             <div class="carousel-item">
-                                <img class="d-block w-100" src="{{ asset('images/car/images/' . $image->image) }}"
+                                <img class="d-block w-100" src="{{ asset($image->image) }}"
                                     alt="">
                             </div>
                         @endforeach

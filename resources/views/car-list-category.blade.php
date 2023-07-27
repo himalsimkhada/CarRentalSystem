@@ -48,7 +48,7 @@
                     @foreach ($pricedesc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
                                     class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
@@ -80,7 +80,7 @@
                     @foreach ($priceasc as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
                                     class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
@@ -112,7 +112,7 @@
                     @forelse ($location as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
                                     class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>
@@ -149,7 +149,7 @@
                     @foreach ($lists as $list)
                         <div class="col-sm-3 my-5">
                             <div class="card" style="width: 100%; min-height: 100%">
-                                <img src="{{ file_exists(asset('images/car/images/' . $list->primary_image)) ? asset('images/car/images/' . $list->primary_image) : asset('images/car/images/default.png') }}"
+                                <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
                                     class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $list->model }}</h5>

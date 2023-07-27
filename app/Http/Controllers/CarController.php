@@ -58,8 +58,8 @@ class CarController extends Controller
         $extension = $getImage->extension();
         $img = Image::make($getImage)->fit(300);
         $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $path = public_path('images/car/images/' . $filename);
-        $img->save($path);
+        $path = 'images/car/images/' . $filename;
+        $img->save(public_path($path));
 
         $company_id = auth()->guard('company')->user()->id;
 
@@ -133,8 +133,8 @@ class CarController extends Controller
             $extension = $getImg->extension();
             $img = Image::make($getImg)->fit(250);
             $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-            $path = public_path('images/car/images/' . $filename);
-            $img->save($path);
+            $path = 'images/car/images/' . $filename;
+            $img->save(public_path($path));
 
             $values = ['primary_image' => $path];
 

@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="card">
-                        <img src="{{ file_exists(public_path('/images/car/images/' . $car->primary_image)) ? asset('/images/car/images/' . $car->primary_image) : asset('/images/car/images/default.png') }}"
+                        <img src="{{ file_exists(public_path($car->primary_image)) ? asset($car->primary_image) : asset('/images/car/images/default.png') }}"
                             alt=""
                             class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}">
                         <div class="card-body">

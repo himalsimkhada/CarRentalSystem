@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="card">
-                        <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo))? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
+                        <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path(auth()->guard('company')->user()->logo))? asset(auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
                             alt=""
                             class="img-thumbnail">
                         <div class="card-body">

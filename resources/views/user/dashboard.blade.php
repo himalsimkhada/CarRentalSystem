@@ -10,7 +10,7 @@
             <hr>
             <div class="row">
                 <div class="col-sm-3">
-                    <img src="{{ !is_null($user->profile_photo) && file_exists(public_path('/images/profile_images/' . $user->profile_photo)) ? asset('/images/profile_images/' . $user->profile_photo) : asset('/images/profile_images/default.png') }}"
+                    <img src="{{ !is_null($user->profile_photo) && file_exists(public_path($user->profile_photo)) ? asset($user->profile_photo) : asset('/images/profile_images/default.png') }}"
                         alt="" class="img-thumbnail">
                     <small class="form-text text-muted">Profile Picture / Avatar</small>
                 </div>

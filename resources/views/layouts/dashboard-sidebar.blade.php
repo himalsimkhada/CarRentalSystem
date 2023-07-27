@@ -93,7 +93,7 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path('/images/company/profile_images/' .auth()->guard('company')->user()->logo))? asset('/images/company/profile_images/' .auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
+                    <img src="{{ !is_null(auth()->guard('company')->user()->logo) &&file_exists(public_path(auth()->guard('company')->user()->logo))? asset(auth()->guard('company')->user()->logo): asset('/images/company/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ auth()->guard('company')->user()->name }}</p>
@@ -180,7 +180,7 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ !is_null(auth()->user()->profile_photo) && file_exists(public_path('/images/profile_images/' . auth()->user()->profile_photo)) ? asset('/images/profile_images/' . auth()->user()->profile_photo) : asset('/images/profile_images/default.png') }}"
+                    <img src="{{ !is_null(auth()->user()->profile_photo) && file_exists(public_path(auth()->user()->profile_photo)) ? asset(auth()->user()->profile_photo) : asset('/images/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ auth()->user()->username }}</p>

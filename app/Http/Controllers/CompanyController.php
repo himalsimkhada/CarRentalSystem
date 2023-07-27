@@ -115,8 +115,8 @@ class CompanyController extends Controller
             $extension = $getImg->extension();
             $img = Image::make($getImg)->fit(250);
             $filename = $detail->name . '_' . $detail->registration_number . '.' . $extension;
-            $path = public_path('images/company/profile_images/'.$filename);
-            $img->save($path);
+            $path = 'images/company/profile_images/'.$filename;
+            $img->save(public_path($path));
 
             $values = ['logo' => $path];
 

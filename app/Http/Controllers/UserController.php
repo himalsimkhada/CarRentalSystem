@@ -77,8 +77,8 @@ class UserController extends Controller
         $extension = $getprofile->extension();
         $img = Image::make($getprofile)->fit(250);
         $filename = auth()->user()->username . '_' . time() . '.' . $extension;
-        $path = public_path('images/profile_images/'.$filename);
-        $img->save($path);
+        $path = 'images/profile_images/'.$filename;
+        $img->save(public_path($path));
 
         $validatedData = $request->validate([
             'profile_photo' => 'required|image',
