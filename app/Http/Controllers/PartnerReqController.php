@@ -48,10 +48,7 @@ class PartnerReqController extends Controller
 
         PartnerReq::where('id', $id)->update($approve);
 
-        // Company::insert($values);
-        // }
-
-        return redirect()->route('admin.index.partner-req')->with('alert', 'Request approved.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Request Approved.']);
     }
 
     public function deny(Request $request, $id)
@@ -91,6 +88,6 @@ class PartnerReqController extends Controller
 
         PartnerReq::insert($values);
 
-        return redirect()->back()->with('alert', 'Thank you. We will get to you soon.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Thank you. We will get to you soon.']);
     }
 }

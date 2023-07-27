@@ -6,9 +6,6 @@ use App\Models\Booking;
 use App\Models\Car;
 use App\Models\Company;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {

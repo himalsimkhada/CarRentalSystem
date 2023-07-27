@@ -36,6 +36,6 @@ class CarImageController extends Controller
 
         CarImage::insert($values);
 
-        return redirect()->back()->with('alert', 'New image added.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'New car images has been added.']);
     }
 }

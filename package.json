@@ -22,6 +22,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "alertifyjs": "^1.13.1",
         "sweetalert2": "^11.7.20"
     },
     "name": "carrentalsystem",

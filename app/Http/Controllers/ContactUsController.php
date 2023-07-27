@@ -45,7 +45,7 @@ class ContactUsController extends Controller
 
         ContactUs::where('id', '=', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'User emailed successfully');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'User emailed successfully.']);
     }
 
     /**
@@ -88,6 +88,6 @@ class ContactUsController extends Controller
 
         ContactUs::insert($values);
 
-        return view('thank')->with('alert', 'Contact posted successfully.');
+        return view('thank')->with(['type' => 'success', 'message' => 'Messaged successfully.']);
     }
 }

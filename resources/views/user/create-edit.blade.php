@@ -14,8 +14,8 @@
                             alt=""
                             class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}">
                         <div class="card-body">
-                            <form action="{{ route('user.update.picture') }}" enctype="multipart/form-data"
-                                method="post" class="needs-validation" novalidate>
+                            <form action="{{ route('user.update.picture') }}" enctype="multipart/form-data" method="post"
+                                class="needs-validation" novalidate>
                                 @csrf
                                 <input type="hidden" value="{{ Crypt::encrypt($user->id) }}" name="id">
                                 <div class="mb-3">
@@ -76,8 +76,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Username</label>
-                                    <input type="text" class="form-control" name="username" value="{{ $user->username }}"
-                                        required>
+                                    <input type="text" class="form-control" name="username"
+                                        value="{{ $user->username }}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">E-mail</label>
@@ -109,40 +109,6 @@
                     </div>
                 @endforeach
             @endif
-            <div class="modal fade" id="changePass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{ route('password.change') }}" method="post" class="needs-validation"
-                            novalidate>
-                            @csrf
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label">Old Password</label>
-                                    <input type="password" name="old_password" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Password</label>
-                                    <input type="password" name="password" minlength="8" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Must be 8 characters
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 @endsection

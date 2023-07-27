@@ -57,12 +57,12 @@ class CompanyCredentialController extends Controller
 
                 CompanyCredential::insert($values);
 
-                return redirect()->back()->with('alert', 'Successfull');
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
             } else {
-                return redirect()->back()->with('alert', 'Invalid file types');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
             }
         } else {
-            return redirect()->back()->with('alert', 'Files not selected');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'Files not selected.']);
         }
     }
 
@@ -106,9 +106,9 @@ class CompanyCredentialController extends Controller
 
                 CompanyCredential::where('id', $id)->update($values);
 
-                return redirect()->back()->with('alert', 'Successfull');
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Credential added successfully.']);
             } else {
-                return redirect()->back()->with('alert', 'Invalid file types');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
             }
         } else {
             $values = [
@@ -119,7 +119,7 @@ class CompanyCredentialController extends Controller
 
             CompanyCredential::where('id', $id)->update($values);
 
-            return redirect()->back()->with('alert', 'Successfull');
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Successfully edited.']);
         }
     }
 

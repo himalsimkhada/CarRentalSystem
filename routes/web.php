@@ -69,9 +69,9 @@ Route::middleware(['auth', 'user_type:1'])->group(function () {
     Route::get('/admin/company/edit/{id}', [CompanyController::class, 'edit'])->name('admin.edit.company');
     Route::post('/admin/company/update', [CompanyController::class, 'update'])->name('admin.update.company');
     Route::get('/admin/company/{id}', [CompanyController::class, 'destroy'])->name('admin.delete.company');
-    Route::get('/admin/user', [UserController::class, 'index'])->name('admin.user.list');
+    Route::get('/admin/user', [UserController::class, 'index'])->name('admin.index.user');
     Route::get('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.delete.user');
-    Route::get('/admin/type', [BookingTypeController::class, 'index'])->name('admin.list.type');
+    Route::get('/admin/type', [BookingTypeController::class, 'index'])->name('admin.index.type');
     Route::get('/admin/type/create', [BookingTypeController::class, 'create'])->name('admin.create.type');
     Route::post('/admin/type/store', [BookingTypeController::class, 'store'])->name('admin.store.type');
     Route::get('/admin/type/edit/{id}', [BookingTypeController::class, 'edit'])->name('admin.edit.type');

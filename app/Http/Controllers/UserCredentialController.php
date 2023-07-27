@@ -57,12 +57,12 @@ class UserCredentialController extends Controller
 
                 UserCredential::insert($values);
 
-                return redirect()->back()->with('alert', 'Successfull');
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials added successfully']);
             } else {
-                return redirect()->back()->with('alert', 'Invalid file types');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
             }
         } else {
-            return redirect()->back()->with('alert', 'Files not selected');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'No files seleted.']);
         }
     }
 
@@ -106,9 +106,9 @@ class UserCredentialController extends Controller
 
                 UserCredential::where('id', '=', $id)->update($values);
 
-                return redirect()->back()->with('alert', 'Successfull');
+                return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials added successfully']);
             } else {
-                return redirect()->back()->with('alert', 'Invalid file types');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid file type.']);
             }
         } else {
             $values = [
@@ -119,7 +119,7 @@ class UserCredentialController extends Controller
 
             UserCredential::where('id', $id)->update($values);
 
-            return redirect()->back()->with('alert', 'Successfull');
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Credentials edited successfully']);
         }
     }
 

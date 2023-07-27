@@ -1,3 +1,29 @@
+<script type="module">
+    function showAlert(message, type) {
+        switch (type) {
+            case 'success':
+                alertify.success(message);
+                break;
+            case 'error':
+                alertify.error(message);
+                break;
+            case 'warning':
+                alertify.warning(message);
+                break;
+            // Add more cases for other types if needed
+            default:
+                break;
+        }
+    }
+
+    var msg = '{{ Session::get('message') }}';
+    var type = '{{ Session::get('type') }}';
+    var exist = '{{ Session::has('message') }}';
+
+    if (exist) {
+        showAlert(msg, type);
+    }
+</script>
 @if (auth()->check() ||
         auth()->guard('company')->check())
     <script type="module">

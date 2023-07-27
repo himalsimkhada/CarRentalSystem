@@ -54,7 +54,7 @@ class BookingController extends Controller
 
             if (!$existingBooking || !$ongoingBooking) {
                 $car->update(['availability' => 0]);
-                $bookingType->update(['count_reservation' => ($bookingType->count_reservation+1)]);
+                $bookingType->update(['count_reservation' => ($bookingType->count_reservation + 1)]);
 
                 $values = [
                     'booking_date' => now(),
@@ -73,14 +73,14 @@ class BookingController extends Controller
                 event(new BookingEvent($user, $company, $values));
 
                 DB::commit();
-                return redirect()->route('user.index.booking')->with('alert', 'Successfully booked.');
+                return redirect()->route('user.index.booking')->with(['type' => 'success', 'message' => 'Booking successful.']);
             } else {
                 DB::rollBack();
-                return redirect()->back()->with('alert', 'Booking already exists from the user.');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Booking already exists from the user.']);
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('alert', 'Error. Please try again.');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'Error. Please try again.']);
         }
     }
 
@@ -108,7 +108,7 @@ class BookingController extends Controller
 
             if (!$existingBooking || !$ongoingBooking) {
                 $car->update(['availability' => 0]);
-                $bookingType->update(['count_reservation' => ($bookingType->count_reservation+1)]);
+                $bookingType->update(['count_reservation' => ($bookingType->count_reservation + 1)]);
 
                 $values = [
                     'booking_date' => now(),
@@ -127,14 +127,14 @@ class BookingController extends Controller
                 event(new BookingEvent($user, $company, $values));
 
                 DB::commit();
-                return redirect()->route('user.reservation')->with('alert', 'Successfully booked.');
+                return redirect()->route('user.index.booking')->with(['type' => 'success', 'message' => 'Booking successful.']);
             } else {
                 DB::rollBack();
-                return redirect()->back()->with('alert', 'Booking already exists from the user.');
+                return redirect()->back()->with(['type' => 'error', 'message' => 'Booking already exists from the user.']);
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('alert', 'Error. Please try again.');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'Error. Please try again.']);
         }
     }
 
@@ -151,14 +151,14 @@ class BookingController extends Controller
 
             $bookingData = $booking->findOrFail($id);
             $response = $bookingData->delete();
-            $bookingData->bookingType->update(['count_reservation' => ($bookingData->bookingType->count_reservation-1)]);
+            $bookingData->bookingType->update(['count_reservation' => ($bookingData->bookingType->count_reservation - 1)]);
             $bookingData->car->update(['availability' => 1]);
 
             DB::commit();
             return response()->json($response);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('alert', 'Error canceling reservation. Please try again.');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'Error canceling reservation. Please try again.']);
         }
     }
 }

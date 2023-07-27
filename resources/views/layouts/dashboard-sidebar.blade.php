@@ -51,13 +51,13 @@
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.user.list') }}">Users<span
+                            <a href="{{ route('admin.index.user') }}">Users<span
                                     class="material-icons align-middle float-end">
                                     person
                                 </span></a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.list.type') }}">Types<span
+                            <a href="{{ route('admin.index.type') }}">Types<span
                                     class="material-icons align-middle float-end">
                                     format_list_bulleted
                                 </span></a>

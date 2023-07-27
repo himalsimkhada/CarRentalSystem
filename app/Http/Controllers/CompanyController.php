@@ -73,7 +73,7 @@ class CompanyController extends Controller
 
         Company::insert($values);
 
-        return redirect()->back()->with('alert', 'Company successfully added!');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Company added successfully.']);
     }
 
     public function edit($id)
@@ -125,7 +125,7 @@ class CompanyController extends Controller
 
         Company::where('id', '=', $detail->id)->update($values);
 
-        return redirect()->back()->with('alert', 'Company successfully edited.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Company successfully edited']);
     }
 
     /**

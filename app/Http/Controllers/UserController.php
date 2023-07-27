@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\UsersDataTable;
-use App\Models\Booking;
 use App\Models\User;
-use App\Models\UserCredential;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -66,7 +64,7 @@ class UserController extends Controller
         ];
         User::where('id', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'Edited successfully.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Edited successfully.']);
     }
 
     public function updatePicture(Request $request)
@@ -77,7 +75,7 @@ class UserController extends Controller
         $extension = $getprofile->extension();
         $img = Image::make($getprofile)->fit(250);
         $filename = auth()->user()->username . '_' . time() . '.' . $extension;
-        $path = 'images/profile_images/'.$filename;
+        $path = 'images/profile_images/' . $filename;
         $img->save(public_path($path));
 
         $validatedData = $request->validate([
@@ -89,7 +87,7 @@ class UserController extends Controller
         ];
         User::where('id', '=', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'Profile updated.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Profile updated.']);
     }
 
     public function password(Request $request)
@@ -104,9 +102,9 @@ class UserController extends Controller
             ];
             User::where('id', '=', $id)->update($values);
 
-            return redirect()->back()->with('alert', 'Password changed');
+            return redirect()->back()->with(['type' => 'success', 'message' => 'Password chnaged.']);
         } else {
-            return redirect()->back()->with('alert', 'Old Password doesnt match.');
+            return redirect()->back()->with(['type' => 'error', 'message' => 'Old password doesn\'t match.']);
         }
     }
 

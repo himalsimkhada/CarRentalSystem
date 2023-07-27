@@ -46,7 +46,7 @@ class LocationController extends Controller
         ];
         $location->insert($values);
 
-        return redirect()->back()->with('alert', 'Added successfully');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'New location added successfully.']);
     }
 
     public function edit($id)
@@ -74,7 +74,7 @@ class LocationController extends Controller
         ];
         $location->where('id', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'Updated successfully.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Location edited successfully.']);
     }
 
     /**

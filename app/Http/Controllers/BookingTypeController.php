@@ -54,7 +54,7 @@ class BookingTypeController extends Controller
 
         BookingType::insert($values);
 
-        return redirect()->back()->with('alert', 'Booking type added successfully.');
+        return redirect()->route('admin.index.type')->with(['type' => 'success', 'message' => 'Booking type added successfully.']);
     }
 
     /**
@@ -94,7 +94,7 @@ class BookingTypeController extends Controller
 
         $bookingType->where('id', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'Booking type successfully edited.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Booking type edited successfully.']);
     }
 
     /**

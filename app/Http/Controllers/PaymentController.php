@@ -26,7 +26,7 @@ class PaymentController extends Controller
 
         $booking = Booking::find($id);
         if (!$booking) {
-            return redirect()->route('user.index.booking')->with('error', 'Invalid booking ID.');
+            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => 'Invalid booking ID.']);
         }
         $response = $provider->createOrder([
             "intent" => "CAPTURE",
@@ -49,21 +49,15 @@ class PaymentController extends Controller
                     return redirect()->away($links['href']);
                 }
             }
-            return redirect()
-                ->route('paypal.cancel.payment')
-                ->with('error', 'Something went wrong.');
+            return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Payment cancled. Something went wrong.']);
         } else {
-            return redirect()
-                ->route('user.index.booking')
-                ->with('error', $response['message'] ?? 'Something went wrong.');
+            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
         }
     }
 
     public function paymentCancel()
     {
-        return redirect()
-            ->route('user.index.booking')
-            ->with('error', 'You have canceled the transaction.');
+        return redirect()->route('user.index.booking')->with(['type' => 'warning', 'message' => 'You have canceled the transaction.']);
     }
 
     public function paymentSuccess(Request $request, $id)
@@ -95,7 +89,7 @@ class PaymentController extends Controller
                 $company = $car->company;
 
                 if (!$booking) {
-                    return redirect()->route('user.index.booking')->with('error', 'Invalid booking ID.');
+                    return redirect()->back()->with(['type' => 'error', 'message' => 'Invalid booking ID.']);
                 }
 
                 $booking->payment = $id;
@@ -105,15 +99,17 @@ class PaymentController extends Controller
 
                 DB::commit();
 
-                return redirect()->route('user.index.booking')->with('success', 'Transaction complete.');
+                return redirect()->route('user.index.booking')->with(['type' => 'success', 'message' => 'Transaction complete']);
+                // return redirect()->route('user.index.booking')->with(['type' => 'success', 'message' => 'Booking paid successfully.']);
             } else {
                 DB::rollBack();
-                return redirect()->route('user.index.booking')->with('error', $response['message'] ?? 'Something went wrong.');
+                return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
             }
         } catch (\Exception $e) {
             var_dump($e);
             DB::rollBack();
-            return redirect()->route('user.index.booking')->with('error', 'Error occurred. Payment reverted.');
+
+            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => 'Error occured. Payment reverted.']);
         }
     }
 

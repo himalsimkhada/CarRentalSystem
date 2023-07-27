@@ -78,7 +78,7 @@ class CarController extends Controller
 
         Car::insert($values);
 
-        return redirect()->back()->with('alert', 'Car successfully added.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'New car added successfully.']);
     }
 
     public function edit($id)
@@ -143,7 +143,7 @@ class CarController extends Controller
 
         Car::where('id', '=', $id)->update($values);
 
-        return redirect()->back()->with('alert', 'Car successfully edited.');
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Car successfully edited.']);
     }
 
     /**
