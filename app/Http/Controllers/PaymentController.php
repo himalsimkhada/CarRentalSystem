@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PaymentEvent;
 use App\Models\Booking;
 use App\Models\Invoice;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -17,7 +18,7 @@ class PaymentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function handlePayment(Request $request)
+    public function handlePayment(Request $request): RedirectResponse
     {
         $id = $request->input('id');
         $provider = new PayPalClient;

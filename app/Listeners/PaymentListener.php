@@ -30,7 +30,7 @@ class PaymentListener
         Notification::send($admin, new PaymentNotification($event->user));
         Notification::send($event->company, new PaymentNotification($event->company));
         Notification::send($event->user, new PaymentNotification($event->user));
-        Mail::to($event->user->email)->send(new UserPaymentMail($event->values));
-        Mail::to($event->company->email)->send(new CompanyPaymentRecieveMail($event->values, $event->company));
+        // Mail::to($event->user->email)->send(new UserPaymentMail($event->values));
+        // Mail::to($event->company->email)->send(new CompanyPaymentRecieveMail($event->values, $event->company));
     }
 }
