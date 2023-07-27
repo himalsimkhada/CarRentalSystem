@@ -9,19 +9,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - @yield('title')</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/favicon-16x16.png') }}">
 
-    @include('layouts.style')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <script src="{{ asset('js/app.js') }}"></script>
 </head>
 
 <body>
@@ -30,7 +24,7 @@
             class="material-icons">
             expand_less
         </span></a>
-    <script>
+    <script type="module">
         $(document).ready(function() {
             $(window).scroll(function() {
                 if ($(this).scrollTop() > 100) {
@@ -49,7 +43,7 @@
         });
     </script>
 
-    <script>
+    <script type="module">
         // Example starter JavaScript for disabling form submissions if there are invalid fields
         (function() {
             'use strict';
@@ -70,7 +64,7 @@
         })();
     </script>
 
-    <script>
+    <script type="module">
         var msg = '{{ Session::get('alert') }}';
         var exist = '{{ Session::has('alert') }}';
         if (exist) {

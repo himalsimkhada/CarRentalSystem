@@ -76,16 +76,16 @@ class UserController extends Controller
         $getprofile = $request->file('profile_photo');
         $extension = $getprofile->extension();
         $img = Image::make($getprofile)->fit(250);
-        $path = public_path('images/profile_images');
         $filename = auth()->user()->username . '_' . time() . '.' . $extension;
-        $img->save($path . '/' . $filename);
+        $path = public_path('images/profile_images/'.$filename);
+        $img->save($path);
 
         $validatedData = $request->validate([
             'profile_photo' => 'required|image',
         ]);
 
         $values = [
-            'profile_photo' => $filename,
+            'profile_photo' => $path,
         ];
         User::where('id', '=', $id)->update($values);
 

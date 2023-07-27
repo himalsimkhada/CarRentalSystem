@@ -82,7 +82,7 @@ class User extends Authenticatable
     public function getProfilePhotoUrlAttribute()
     {
         $filename = $this->profile_photo;
-        $url = asset('public/images/profile_images' . $filename);
+        $url = asset('public/images/profile_images/' . $filename);
 
         return $url;
     }

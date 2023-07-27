@@ -9,32 +9,36 @@
             <p class="text-center h1 title">Welcome, {{ $user->username }}</p>
             <hr>
             <div class="row">
-                <div class="col-3">
-                    <img src="{{ file_exists(asset('/images/profile_images/' . $user->profile_photo)) ? asset('/images/profile_images/' . $user->profile_photo) : asset('/images/profile_images/default.png') }}"
+                <div class="col-sm-3">
+                    <img src="{{ !is_null($user->profile_photo) && file_exists(public_path('/images/profile_images/' . $user->profile_photo)) ? asset('/images/profile_images/' . $user->profile_photo) : asset('/images/profile_images/default.png') }}"
                         alt="" class="img-thumbnail">
                     <small class="form-text text-muted">Profile Picture / Avatar</small>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Basic Information</h4>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Basic Information</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Firstname: <b>{{ $user->firstname }}</b></li>
+                            <li class="list-group-item">Lastname: <b>{{ $user->lastname }}</b></li>
+                            <li class="list-group-item">Date of Birth: <b>{{ $user->date_of_birth }}</b></li>
+                            <li class="list-group-item">Address: <b>{{ $user->address }}</b></li>
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Firstname: <b>{{ $user->firstname }}</b></li>
-                        <li class="list-group-item">Lastname: <b>{{ $user->lastname }}</b></li>
-                        <li class="list-group-item">Date of Birth: <b>{{ $user->date_of_birth }}</b></li>
-                        <li class="list-group-item">Address: <b>{{ $user->address }}</b></li>
-                    </ul>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Private Information</h4>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Private Information</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">User ID: <b>{{ $user->id }}</b></li>
+                            <li class="list-group-item">Username: <b>{{ $user->username }}</b></li>
+                            <li class="list-group-item">E-mail: <b>{{ $user->email }}</b></li>
+                            <li class="list-group-item">Contact: <b>{{ $user->contact }}</b></li>
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">User ID: <b>{{ $user->id }}</b></li>
-                        <li class="list-group-item">Username: <b>{{ $user->username }}</b></li>
-                        <li class="list-group-item">E-mail: <b>{{ $user->email }}</b></li>
-                        <li class="list-group-item">Contact: <b>{{ $user->contact }}</b></li>
-                    </ul>
                 </div>
             </div>
             <hr>

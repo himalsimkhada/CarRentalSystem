@@ -3023,7 +3023,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var laravel_datatables_vite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! laravel-datatables-vite */ "./node_modules/laravel-datatables-vite/js/index.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_2__);
-window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 
 
@@ -3039,8 +3038,14 @@ window.Swal = (sweetalert2__WEBPACK_IMPORTED_MODULE_2___default());
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
-window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _popperjs_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
+
+window._ = (lodash__WEBPACK_IMPORTED_MODULE_0___default());
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -3048,11 +3053,14 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
  * code may be modified to fit the specific needs of your application.
  */
 
-try {
-  window.Popper = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
-  window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-  window.bootstrap = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
-} catch (e) {}
+
+window.Popper = _popperjs_core__WEBPACK_IMPORTED_MODULE_1__;
+// window.$ = window.jQuery = require('jquery');
+window.bootstrap = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
+
+window.$ = window.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_2___default());
+
+// import 'bootstrap';
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -3061,7 +3069,7 @@ try {
  */
 
 
-window.axios = axios__WEBPACK_IMPORTED_MODULE_0__["default"];
+window.axios = axios__WEBPACK_IMPORTED_MODULE_3__["default"];
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 /**

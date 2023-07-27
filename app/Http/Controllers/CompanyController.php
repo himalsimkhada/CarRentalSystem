@@ -67,7 +67,6 @@ class CompanyController extends Controller
             'contact' => $request->input('contact'),
             'registration_number' => $request->input('registration_number'),
             'email' => $request->input('email'),
-            'logo' => 'null',
         ];
 
         User::where('id', '=', $request->input('owner_id'))->update(['user_type' => 2]);
@@ -115,11 +114,11 @@ class CompanyController extends Controller
         if ($getImg) {
             $extension = $getImg->extension();
             $img = Image::make($getImg)->fit(250);
-            $path = public_path('images/company/profile_images');
             $filename = $detail->name . '_' . $detail->registration_number . '.' . $extension;
-            $img->save($path . '/' . $filename);
+            $path = public_path('images/company/profile_images/'.$filename);
+            $img->save($path);
 
-            $values = ['logo' => $filename];
+            $values = ['logo' => $path];
 
             Company::where('id', $detail->id)->update($values);
         }

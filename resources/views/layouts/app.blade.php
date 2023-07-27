@@ -8,22 +8,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Online Car Rental - @yield('title')</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/favicon-16x16.png') }}">
-
-    @include('layouts.style')
-    <script src="{{ asset('js/app.js') }}"></script>
-    {{-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> --}}
-    {{-- <link rel="stylesheet" href="{{ asset('css/navbar.css') }}"> --}}
-
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 
 <body>
@@ -34,11 +25,11 @@
         </main>
     </div>
 
-    {{-- <footer class="bg-dark text-center text-white">
+    <footer class="bg-dark text-center text-white">
         @include('layouts.footer')
-    </footer> --}}
+    </footer>
 
-    <script>
+    <script type="module">
         var msg = '{{ Session::get('alert') }}';
         var exist = '{{ Session::has('alert') }}';
         if (exist) {
@@ -46,7 +37,7 @@
         }
     </script>
 
-    <script>
+    <script type="module">
         (function() {
             'use strict'
 

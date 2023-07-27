@@ -1,6 +1,6 @@
 @if (auth()->check() ||
         auth()->guard('company')->check())
-    <script>
+    <script type="module">
         $(".dropdown-menu-right").click(function(e) {
             e.stopPropagation();
         })

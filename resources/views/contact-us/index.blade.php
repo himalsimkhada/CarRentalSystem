@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         $(document).on('click', '#email', function() {
             var id = $(this).data('id');
             var user_id = $(this).data('user_id');

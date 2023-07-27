@@ -34,7 +34,7 @@ class Car extends Model
     {
         return $this->belongsTo(BookingType::class, 'booking_type_id');
     }
-    public function images()
+    public function carImages()
     {
         return $this->hasMany(CarImage::class);
     }

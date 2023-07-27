@@ -42,7 +42,6 @@ class UserCredentialController extends Controller
                 ]);
 
                 $extension_file = $validate_file['file']->extension();
-
                 $file = $validate_file['file']->storeAs('/', $user->username . '_' . time() . '.' . $extension_file, 'user_credentials');
 
                 $extension_image = $validate_file['image']->extension();

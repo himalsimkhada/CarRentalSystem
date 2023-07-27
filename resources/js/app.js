@@ -1,5 +1,3 @@
-window.$ = window.jQuery = require("jquery");
-
 import "./bootstrap";
 import "laravel-datatables-vite";
 

@@ -40,18 +40,18 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
         <a class="navbar-brand align-middle" href="{{ route('index') }}" target="_blank"><img
                 src="{{ asset('images/system/logo/logo1.png') }}"></a>
         <a class="navbar-brand" href="{{ route('index') }}">Online Car Rental</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+            aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                 <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
                     <a href="{{ route('index') }}" class="nav-link">Home</a>
                 </li>
@@ -124,7 +124,7 @@
                 @endif
             </ul>
             @if (auth()->guard('company')->check() || auth()->check())
-                <div>
+                <div class="d-flex">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link notification" data-bs-toggle="dropdown" href="#" role="button"

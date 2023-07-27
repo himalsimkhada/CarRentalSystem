@@ -21,16 +21,16 @@ class CarImageController extends Controller
         $getImage = $request->file('image');
         $extension = $getImage->extension();
         $img = Image::make($getImage)->fit(150);
-        $path = public_path('images/car/images');
-        $filename = $car->plate_number . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $img->save($path . '/' . $filename);
+        $filename = $car->plate_number . '-' . $car->model . '_' . time() . '.' . $extension;
+        $path = public_path('images/car/images/'.$filename);
+        $img->save($path);
 
         $validatedData = $request->validate([
             'image' => 'required|image',
         ]);
 
         $values = [
-            'image' => $filename,
+            'image' => $path,
             'car_id' => $car->id,
         ];
 

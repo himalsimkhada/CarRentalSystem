@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script type="module">
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');
             var url = "{{ Route::is('company.index.credential') ? route('company.delete.credential', ':id') : route('user.delete.credential', ':id') }}";

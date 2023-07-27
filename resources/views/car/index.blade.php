@@ -24,7 +24,7 @@
                 ? route('admin.delete.car', ':id')
                 : null);
     @endphp
-    <script>
+    <script type="module">
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');
             var url = "{{ $url }}";
@@ -70,21 +70,17 @@
         $(document).on('click', '#image', function() {
             var id = $(this).data('id');
             var url = "{{ route('company.car.store.image') }}"
-            // url = url.replace(':id', id);
-            // url = url.replace(':user_id', user_id);
             Swal.fire({
                 title: 'Upload an image for car!',
-                input: 'file',
-                inputAttributes: {
-                    'accept': 'image/*',
-                    'aria-label': 'Upload your profile picture'
-                },
+                html: '<input id="fileInput" name="image" type="file" class="form-control" accept="image/*" aria-label="Upload your profile picture">',
                 showCancelButton: true,
             }).then((result) => {
                 if (result.value) {
                     var formData = new FormData();
-                    formData.append('image', result.value);
-                    formData.append('id', id)
+                    var fileInput = document.getElementById('fileInput');
+                    var file = fileInput.files[0];
+                    formData.append('image', file);
+                    formData.append('id', id);
 
                     $.ajax({
                         headers: {

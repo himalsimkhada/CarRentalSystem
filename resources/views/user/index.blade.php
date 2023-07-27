@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         $(document).on('click', '#delete', function () {
             var id = $(this).data('id');
             var url = "{{ route('admin.delete.user', ':id') }}";

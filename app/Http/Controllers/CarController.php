@@ -57,9 +57,9 @@ class CarController extends Controller
         $getImage = $request->file('primary_image');
         $extension = $getImage->extension();
         $img = Image::make($getImage)->fit(300);
-        $path = public_path('images/car/images');
         $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-        $img->save($path . '/' . $filename);
+        $path = public_path('images/car/images/' . $filename);
+        $img->save($path);
 
         $company_id = auth()->guard('company')->user()->id;
 
@@ -71,7 +71,7 @@ class CarController extends Controller
             'color' => $request->input('color'),
             'plate_number' => $request->input('plate_number'),
             'availability' => $availability,
-            'primary_image' => $filename,
+            'primary_image' => $path,
             'company_id' => $company_id,
             'booking_type_id' => $request->input('booking_type_id'),
         ];
@@ -132,11 +132,11 @@ class CarController extends Controller
         if ($getImg) {
             $extension = $getImg->extension();
             $img = Image::make($getImg)->fit(250);
-            $path = public_path('images/car/images');
             $filename = $request->input('plate_number') . '-' . $request->input('model') . '_' . time() . '.' . $extension;
-            $img->save($path . '/' . $filename);
+            $path = public_path('images/car/images/' . $filename);
+            $img->save($path);
 
-            $values = ['primary_image' => $filename];
+            $values = ['primary_image' => $path];
 
             Car::where('id', '=', $id)->update($values);
         }

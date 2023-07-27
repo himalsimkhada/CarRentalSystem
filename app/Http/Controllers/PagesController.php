@@ -90,13 +90,13 @@ class PagesController extends Controller
         $drop_date = $request->get('return');
         $type = $request->get('type');
 
-        $get_type = Car::with('bookingType')->where('id', '=', $car_id)->first()->bookingType->name;
-
-        $cars = Car::with(['company', 'bookingType', 'images'])->where('id', '=', $car_id)->get();
+        $car = Car::where('id', $car_id)->first();
+        $get_type = $car->bookingType->name;
+        $images = $car->carImages;
 
         $images = CarImage::with('car')->where('car_id', '=', $car_id)->get();
 
-        return view('car-detail', ['car_detail' => $cars, 'pickdate' => $pick_date, 'dropdate' => $drop_date, 'bookingtype' => $type, 'types' => $booking_type_list, 'type_name' => $get_type, 'images' => $images, 'locations' => $locations]);
+        return view('car-detail', ['car' => $car, 'pickdate' => $pick_date, 'dropdate' => $drop_date, 'bookingtype' => $type, 'types' => $booking_type_list, 'type_name' => $get_type, 'images' => $images, 'locations' => $locations]);
     }
 
     public function getCategory(Request $request, $id)

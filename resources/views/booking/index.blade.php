@@ -22,7 +22,7 @@
         @endforeach
     @endif
 
-    {{-- <script>
+    {{-- <script type="module">
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');
             var url = "{{ route('admin.delete.type', ':id') }}";
@@ -67,7 +67,7 @@
         });
     </script> --}}
 
-    <script>
+    <script type="module">
         $(document).on('click', '#paymentLink', function() {
             var id = $(this).data('id');
             var route = "{{ route('paypal.make.payment') }}";
@@ -89,7 +89,7 @@
         })
     </script>
 
-    <script>
+    <script type="module">
         $(document).on('click', '#delete', function() {
             var id = $(this).data('id');
             var url = "{{ route('user.delete.booking', ':id') }}";

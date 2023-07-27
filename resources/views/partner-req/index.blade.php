@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         $(document).on('click', '#deny', function() {
             var id = $(this).data('id');
             var url = "{{ route('admin.deny.partner', ':id') }}";

@@ -180,7 +180,7 @@
 
             <ul class="list-unstyled components">
                 <div class="text-center m-2">
-                    <img src="{{ file_exists(public_path('/images/profile_images/' . auth()->user()->profile_photo)) ? asset('/images/profile_images/' . auth()->user()->profile_photo) : asset('/images/profile_images/default.png') }}"
+                    <img src="{{ !is_null(auth()->user()->profile_photo) && file_exists(public_path('/images/profile_images/' . auth()->user()->profile_photo)) ? asset('/images/profile_images/' . auth()->user()->profile_photo) : asset('/images/profile_images/default.png') }}"
                         alt="" class="img-fluid rounded-circle">
                     <p class="welcome-user">Welcome,
                     <p class="username">{{ auth()->user()->username }}</p>
@@ -253,7 +253,7 @@
         <span></span>
     </button>
 </div>
-<script>
+<script type="module">
     $(document).ready(function() {
         $('#sidebarCollapse').on('click', function() {
             $('#sidebar-dashboard').toggleClass('active');
