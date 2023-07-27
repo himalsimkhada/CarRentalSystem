@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\CompaniesDataTable;
 use App\Models\Company;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -27,10 +28,11 @@ class CompanyController extends Controller
     }
     public function dashboard()
     {
+        $today = Carbon::today()->startOfDay();
         $company = auth()->guard('company')->user();
         $count_cars = $company->cars->count();
         $count_reservations = $company->bookings->count();
-        $count_today = $company->bookings()->whereDate('booking_date', '=', date('Y-m-d'))->count();
+        $count_today = $company->bookings->where('booking_date',  '>=', $today)->count();
         $count_users = User::select('*')
             ->join('bookings', 'bookings.user_id', '=', 'users.id')
             ->join('cars', 'cars.id', '=', 'bookings.car_id')
