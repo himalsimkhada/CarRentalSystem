@@ -17,6 +17,6 @@ yarn-error.log
 !/public/images/company/profile_images/default.png
 /public/images/profile_images/*
 !/public/images/profile_images/default.png
-# /public/company/credentials/files/*
-# /public/company/credentials/images/*
+/public/company/credentials/files/*
+/public/company/credentials/images/*
 
