@@ -154,7 +154,7 @@ class UserController extends Controller
                 ];
 
                 // Update the user record with the new hashed password
-                User::where('id', '=', $id)->update($values);
+                User::where('id', $id)->update($values);
 
                 DB::commit();
 
