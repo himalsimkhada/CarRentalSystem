@@ -34,13 +34,6 @@ Route::get('/phpinfo', function () {
     return phpinfo();
 });
 
-Auth::routes();
-
-Route::get('/company/login', [CompanyAuthController::class, 'showLoginForm'])->name('company.login.page');
-Route::post('/company/login', [CompanyAuthController::class, 'login'])->name('company.login');
-Route::get('/company/logout', [CompanyAuthController::class, 'logout'])->name('company.logout');
-
-//routes for global pages
 Route::get('/', [PagesController::class, 'index'])->name('index');
 Route::get('/listing', [PagesController::class, 'listing'])->name('listing');
 Route::get('/car/category/{type_id}', [PagesController::class, 'getCategory'])->name('car.category');
@@ -58,7 +51,12 @@ Route::get('/partner/create', [PartnerReqController::class, 'create'])->name('pa
 Route::post('/partner/store', [PartnerReqController::class, 'store'])->name('partner-req.store');
 Route::view('/faqs', 'faqs')->name('faqs');
 
-//group routes for admin pages
+Auth::routes();
+
+Route::get('/company/login', [CompanyAuthController::class, 'showLoginForm'])->name('company.login.page');
+Route::post('/company/login', [CompanyAuthController::class, 'login'])->name('company.login');
+Route::get('/company/logout', [CompanyAuthController::class, 'logout'])->name('company.logout');
+
 Route::middleware(['auth', 'user_type:1'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/car', [CarController::class, 'index'])->name('admin.index.car');
@@ -84,7 +82,6 @@ Route::middleware(['auth', 'user_type:1'])->group(function () {
     Route::get('/admin/messages', [ContactUsController::class, 'index'])->name('admin.messages');
 });
 
-//group routes for company pages
 Route::middleware('auth:company')->group(function () {
     Route::get('/company/dashboard', [CompanyController::class, 'dashboard'])->name('company.dashboard');
     Route::get('/company/car', [CarController::class, 'index'])->name('company.index.car');
@@ -117,7 +114,6 @@ Route::middleware('auth:company')->group(function () {
     Route::post('/company/contact/customer/{id}/{user_id}', [ContactUsController::class, 'emailCustomer'])->name('company.support.customer');
 });
 
-//group routes for user pages
 Route::middleware(['auth', 'user_type:3'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/booking/book/searched', [BookingController::class, 'storeFromIndex'])->name('user.car.book.index');
@@ -152,4 +148,8 @@ Route::middleware('auth:web,company')->group(function () {
     Route::post('/notification/mark-as-read', [NotificationController::class, 'markNotification'])->name('notification.mark-as-read');
     Route::get('/notification/count/unread', [NotificationController::class, 'getUnreadNotificationCount'])
         ->name('notification.count.unread');
+});
+
+Route::fallback(function () {
+    return redirect()->route('index')->with(['type' => 'error', 'message' => 'Page not found.']);
 });
