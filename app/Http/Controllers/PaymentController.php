@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Events\PaymentEvent;
 use App\Models\Booking;
 use App\Models\Invoice;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaymentController extends Controller
@@ -20,39 +23,45 @@ class PaymentController extends Controller
      */
     public function handlePayment(Request $request): RedirectResponse
     {
-        $id = $request->input('id');
-        $provider = new PayPalClient;
-        $provider->setApiCredentials(config('paypal'));
-        $paypalToken = $provider->getAccessToken();
+        try {
+            $id = $request->input('id');
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $paypalToken = $provider->getAccessToken();
 
-        $booking = Booking::find($id);
-        if (!$booking) {
-            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => 'Invalid booking ID.']);
-        }
-        $response = $provider->createOrder([
-            "intent" => "CAPTURE",
-            "application_context" => [
-                "return_url" => route('paypal.success.payment', ['id' => $booking->id]),
-                "cancel_url" => route('paypal.cancel.payment'),
-            ],
-            "purchase_units" => [
-                0 => [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => $booking->final_cost,
+            $booking = Booking::find($id);
+            if (!$booking) {
+                return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Invalid booking ID.']);
+            }
+            $response = $provider->createOrder([
+                "intent" => "CAPTURE",
+                "application_context" => [
+                    "return_url" => route('paypal.success.payment', ['id' => $booking->id]),
+                    "cancel_url" => route('paypal.cancel.payment'),
+                ],
+                "purchase_units" => [
+                    0 => [
+                        "amount" => [
+                            "currency_code" => "USD",
+                            "value" => $booking->final_cost,
+                        ],
                     ],
                 ],
-            ],
-        ]);
-        if (isset($response['id']) && $response['id'] != null) {
-            foreach ($response['links'] as $links) {
-                if ($links['rel'] == 'approve') {
-                    return redirect()->away($links['href']);
+            ]);
+            if (isset($response['id']) && $response['id'] != null) {
+                foreach ($response['links'] as $links) {
+                    if ($links['rel'] == 'approve') {
+                        return redirect()->away($links['href']);
+                    }
                 }
+                return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Payment cancled. Something went wrong.']);
+            } else {
+                return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
             }
-            return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Payment cancled. Something went wrong.']);
-        } else {
-            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
+        } catch (Exception $e) {
+            Log::error('Payment Exception: ' . $e->getMessage());
+
+            return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Error occurred during payment.']);
         }
     }
 
@@ -104,13 +113,16 @@ class PaymentController extends Controller
                 // return redirect()->route('user.index.booking')->with(['type' => 'success', 'message' => 'Booking paid successfully.']);
             } else {
                 DB::rollBack();
-                return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
+                return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => $response['message'] ?? 'Canceled. Something went wrong.']);
             }
         } catch (\Exception $e) {
-            var_dump($e);
+            Log::error('Payment Exception: ' . $e->getMessage());
             DB::rollBack();
-
-            return redirect()->route('user.index.booking')->with(['type' => 'error', 'message' => 'Error occured. Payment reverted.']);
+            return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Error occurred. Payment reverted.']);
+        } catch (QueryException $qe) {
+            Log::error('Database Query Exception: ' . $qe->getMessage());
+            DB::rollBack();
+            return redirect()->route('paypal.cancel.payment')->with(['type' => 'error', 'message' => 'Database error occurred. Payment reverted.']);
         }
     }
 
