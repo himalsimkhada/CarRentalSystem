@@ -23,10 +23,8 @@ class CompaniesDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $deletebtn = "<a class='btn btn-danger' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
-            delete
-        </span></a></div>";
-                return $deletebtn;
+                $deletebtn = "<a class='btn btn-danger d-flex justify-content-center' data-id='" . $row->id . "' id='delete'><span class='material-icons'>delete</span></a>";
+                return "<div class='btn-group'>".$deletebtn."</div>";
             })
             ->setRowId('id');
     }

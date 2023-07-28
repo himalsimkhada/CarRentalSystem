@@ -21,11 +21,11 @@ class PartnerReqsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $approvebutton = "<div class='btn-group'><a href='" . route('admin.approve.partner', ['id' => $row->id]) . "' class='btn btn-primary btn-sm'><span class='material-icons'>check_circle</span></a>";
-                $denybtn = "<a class='btn btn-danger' data-id='" . $row->id . "' id='deny'><span class='material-icons'>
+                $approvebutton = "<a href='" . route('admin.approve.partner', ['id' => $row->id]) . "' class='btn btn-primary d-flex justify-content-center'><span class='material-icons'>check_circle</span></a>";
+                $denybtn = "<a class='btn btn-danger d-flex justify-content-center' data-id='" . $row->id . "' id='deny'><span class='material-icons'>
     cancel
-</span></a></div>";
-                return $approvebutton . $denybtn;
+</span></a>";
+                return "<div class='btn-group'>" . $approvebutton . $denybtn . "</div>";
             })
             ->setRowId('id');
     }

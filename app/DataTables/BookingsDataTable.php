@@ -24,15 +24,15 @@ class BookingsDataTable extends DataTable
                 $paybtn = "";
                 $delbtn = "";
                 if (auth()->user()->user_type === 3 && $row->payment == 0) {
-                    $paybtn = "<a id='paymentLink' data-id='" . $row->id . "' class='btn btn-warning'><span class='material-icons'>payments</span></a>";
+                    $paybtn = "<a id='paymentLink' data-id='" . $row->id . "' class='btn btn-warning d-flex justify-content-center'><span class='material-icons'>payments</span></a>";
                 }
                 if (auth()->guard('company')->check()) {
-                    $detailbtn = "<a href='" . route('company.show.booking', ['id' => $row->id]) . "' class='btn btn-info'><span class='material-icons'>info</span></a>";
+                    $detailbtn = "<a href='" . route('company.show.booking', ['id' => $row->id]) . "' class='btn btn-info d-flex justify-content-center'><span class='material-icons'>info</span></a>";
                 } elseif (auth()->check()) {
-                    $detailbtn = "<a href='" . route('user.show.booking', ['id' => $row->id]) . "' class='btn btn-info'><span class='material-icons'>info</span></a>";
+                    $detailbtn = "<a href='" . route('user.show.booking', ['id' => $row->id]) . "' class='btn btn-info d-flex justify-content-center'><span class='material-icons'>info</span></a>";
                 }
                 if (auth()->check() && auth()->user()->user_type === 3 && $row->payment == 0) {
-                    $delbtn = "<a data-id='" . $row->id . "' class='btn btn-danger' id='delete'><span class='material-icons'>delete</span></a>";
+                    $delbtn = "<a data-id='" . $row->id . "' class='btn btn-danger d-flex justify-content-center' id='delete'><span class='material-icons'>delete</span></a>";
                 }
                 $btns = "<div class=btn-group>" . $paybtn . $detailbtn . $delbtn . "</div>";
                 return $btns;
@@ -80,7 +80,7 @@ class BookingsDataTable extends DataTable
                 ->where('user_id', $user->id);
             return $bookings;
         }
-        // return $model->newQuery();
+        return $model->newQuery();
     }
 
     /**

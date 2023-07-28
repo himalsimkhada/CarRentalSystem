@@ -8,8 +8,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class ContactUsDataTable extends DataTable
@@ -24,7 +22,7 @@ class ContactUsDataTable extends DataTable
         if (request()->route()->getName() === 'company.messages') {
             return (new EloquentDataTable($query))
                 ->addColumn('action', function ($row) {
-                    $emailbtn = "<a class='btn btn-primary' data-id='".$row->id."' data-user_id='".$row->user_id."' id='email'>Email</a></div>";
+                    $emailbtn = "<a class='btn btn-primary' data-id='" . $row->id . "' data-user_id='" . $row->user_id . "' id='email'>Email</a></div>";
                     return $emailbtn;
                 })
                 ->setRowId('id');
@@ -45,6 +43,7 @@ class ContactUsDataTable extends DataTable
             $model = ContactUs::query()->where('type', 'emr');
             return $model;
         }
+        return $model->newQuery();
     }
 
     /**
@@ -65,7 +64,7 @@ class ContactUsDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 

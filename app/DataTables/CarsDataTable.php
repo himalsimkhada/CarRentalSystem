@@ -23,11 +23,11 @@ class CarsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $editbutton = "<a href='" . route('company.edit.car', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary btn-sm'><span class='material-icons'>edit</span></a>";
-                $deletebtn = "<a class='btn btn-danger d-flex justify-content-center align-content-between' data-id='" . $row->id . "' id='delete'><span class='material-icons mr-1'>
+                $editbutton = "<a href='" . route('company.edit.car', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary d-flex justify-content-center'><span class='material-icons'>edit</span></a>";
+                $deletebtn = "<a class='btn btn-danger d-flex justify-content-center' data-id='" . $row->id . "' id='delete'><span class='material-icons mr-1'>
         delete
     </span></a>";
-                $addimgbtn = "<a class='btn btn-info' data-id='" . $row->id . "' id='image'><span class='material-icons'>
+                $addimgbtn = "<a class='btn btn-info d-flex justify-content-center' data-id='" . $row->id . "' id='image'><span class='material-icons'>
                 add
             </span></a>";
 

@@ -22,11 +22,11 @@ class UsersDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $editbutton = "<div class='btn-group'><a href='" . route('user.edit.profile', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary btn-sm'><span class='material-icons'>edit</span></a>";
-                $deletebtn = "<a class='btn btn-danger' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
+                $editbutton = "<a href='" . route('user.edit.profile', ['id' => Crypt::encrypt($row->id)]) . "' class='btn btn-primary d-flex justify-content-center'><span class='material-icons'>edit</span></a>";
+                $deletebtn = "<a class='btn btn-danger d-flex justify-content-center' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
                 delete
-            </span></a></div>";
-                return $editbutton . $deletebtn;
+            </span></a>";
+                return "<div class='btn-group'>" . $editbutton . $deletebtn . "</div>";
             })
             ->setRowId('id');
     }

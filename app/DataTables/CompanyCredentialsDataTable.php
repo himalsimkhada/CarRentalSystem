@@ -8,8 +8,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class CompanyCredentialsDataTable extends DataTable
@@ -23,18 +21,18 @@ class CompanyCredentialsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($row) {
-                $editbutton = "<div class='btn-group'><a href='".route('company.edit.credential', ['id' => $row->id])."' class='btn btn-primary btn-sm'><span class='material-icons'>edit</span></a>";
-                $deletebtn = "<a class='btn btn-danger' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
+                $editbutton = "<a href='" . route('company.edit.credential', ['id' => $row->id]) . "' class='btn btn-primary d-flex justify-content-center'><span class='material-icons'>edit</span></a>";
+                $deletebtn = "<a class='btn btn-danger d-flex justify-content-center' data-id='" . $row->id . "' id='delete'><span class='material-icons'>
             delete
-        </span></a></div>";
-                return $editbutton . $deletebtn;
+        </span></a>";
+                return "<div class='btn-group'>" . $editbutton . $deletebtn . "</div>";
             })
-            ->editColumn('file', function ($row){
-                $file = "<a href='".asset('company/credentials/files/'.$row->file)."' class='text-info'>Download</a>";
+            ->editColumn('file', function ($row) {
+                $file = "<a href='" . asset('company/credentials/files/' . $row->file) . "' class='text-info'>Download</a>";
                 return $file;
             })
-            ->editColumn('image', function($row){
-                $image = "<a href='".asset('company/credentials/images/'.$row->image)."' class='text-info'>Download</a>";
+            ->editColumn('image', function ($row) {
+                $image = "<a href='" . asset('company/credentials/images/' . $row->image) . "' class='text-info'>Download</a>";
                 return $image;
             })
             ->rawColumns(['file', 'image', 'action'])
@@ -69,7 +67,7 @@ class CompanyCredentialsDataTable extends DataTable
                 Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
