@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Closure;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -42,22 +44,19 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $input = $request->all();
-
-        $this->validate($request, [
+        $input = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        if (Auth::attempt(['email' => $input['email'], 'password' => $input['password']])) {
+            $user = auth()->user();
 
-        if (Auth::attempt(array('email' => $input['email'], 'password' => $input['password']))) {
-            if (auth()->user()->user_type == 1) {
+            if ($user->user_type == 1) {
                 return redirect()->route('admin.dashboard');
-            } elseif (auth()->user()->user_type == 3) {
-                return redirect()->route('user.dashboard');
+            } elseif ($user->user_type == 3) {
+                return redirect()->intended();
             }
-        } else {
-            return redirect()->route('login')
-                ->with('error', 'Wrong credentials');
         }
+        return redirect()->route('login')->with('error', 'Wrong credentials');
     }
 }
