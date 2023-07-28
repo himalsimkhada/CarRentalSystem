@@ -23,10 +23,10 @@
                 </li>
                 <li>
                     <a href="{{ route('admin.notification') }}">Notification <span
-                            class="badge badge-primary notification-badge">{{ auth()->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-end">
                             notifications
-                        </span></a>
+                        </span> <span
+                            class="badge bg-dark notification-badge float-end">{{ auth()->user()->unreadNotifications()->count() }}</span></a>
                 </li>
                 <li>
                     <a href="{{ route('admin.index.partner-req') }}">Partner Requests</a>
@@ -113,10 +113,11 @@
                 </li>
                 <li>
                     <a href="{{ route('company.notification') }}">Notification <span
-                            class="badge badge-primary notification-badge">{{ auth()->guard('company')->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-end">
                             notifications
-                        </span></a>
+                        </span> <span
+                            class="badge bg-dark notification-badge float-end">{{ auth()->guard('company')->user()->unreadNotifications()->count() }}</span>
+                    </a>
                 </li>
                 <li>
                     <a href="{{ route('company.messages') }}">Messages</a>
@@ -199,10 +200,11 @@
                 </li>
                 <li>
                     <a href="{{ route('user.notification') }}">Notification <span
-                            class="badge badge-primary notification-badge">{{ auth()->user()->unreadNotifications()->count() }}</span><span
                             class="material-icons align-middle float-end">
                             notifications
-                        </span></a>
+                        </span> <span
+                            class="badge bg-dark notification-badge float-end">{{ auth()->user()->unreadNotifications()->count() }}</span>
+                    </a>
                 </li>
                 <li>
                     <a href="{{ route('user.index.booking') }}">Booking<span
