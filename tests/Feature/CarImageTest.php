@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -17,9 +18,9 @@ class CarImageTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
         $data = [
             'car_id' => 2,

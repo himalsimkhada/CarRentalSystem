@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -15,6 +16,7 @@ class RegistrationTest extends TestCase
      */
     public function test_can_register_user()
     {
+        $admin = User::whereIn('user_type', [1])->get();
         $this->withoutExceptionHandling();
 
         $credential = [
@@ -23,12 +25,14 @@ class RegistrationTest extends TestCase
             'address' => 'Thali, KTM',
             'contact' => '000',
             'date_of_birth' => '2000-01-14',
-            'email' => 'test@test.com',
+            'email' => 'testhimal@test.com',
             'password' => 'himal1234',
             'password_confirmation' => 'himal1234',
-            'username' => 'himal123',
+            'username' => 'himal1234',
             'user_type' => 3,
         ];
+
+        // event()
 
         $this->json('POST', route('register'), $credential)->assertStatus(201);
     }

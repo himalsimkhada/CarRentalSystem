@@ -33,7 +33,7 @@ class PartnerReqTest extends TestCase
 
         $this->actingAs($user, 'api');
 
-        $this->get(route('admin.requests'))->assertStatus(200);
+        $this->get(route('admin.index.partner-req'))->assertStatus(200);
     }
 
     public function test_user_can_request_for_partner()
@@ -66,7 +66,7 @@ class PartnerReqTest extends TestCase
 
         $this->actingAs($user, 'api');
 
-        $this->json('GET', route('admin.req.approve', ['r_id' => 1]))->assertStatus(302);
+        $this->json('GET', route('admin.approve.partner', ['id' => 1]))->assertStatus(302);
     }
 
 
@@ -78,6 +78,6 @@ class PartnerReqTest extends TestCase
 
         $this->actingAs($user, 'api');
 
-        $this->json('GET', route('admin.req.deny', ['deny_id' => 2]))->assertStatus(302);
+        $this->json('GET', route('admin.deny.partner', ['id' => 2]))->assertStatus(200);
     }
 }

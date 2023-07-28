@@ -55,7 +55,7 @@ class PagesController extends Controller
 
     public function car_list(Request $request)
     {
-        $cars = Car::with('images', 'bookingType')->where('availability', 1)->get();
+        $cars = Car::with('carImages', 'bookingType')->where('availability', 1)->get();
 
         $srtpricedesc = Car::with('bookingType')->join('booking_types', 'cars.booking_type_id', '=', 'booking_types.id')
             ->where('availability', 1)

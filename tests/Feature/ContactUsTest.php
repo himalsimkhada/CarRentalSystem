@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,7 +19,7 @@ class ContactUsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->get(route('contactus'))->assertStatus(200);
+        $this->get(route('contactus.create'))->assertStatus(200);
     }
 
     public function test_check_contact_admin()
@@ -36,9 +37,9 @@ class ContactUsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
         $this->get(route('company.messages'))->assertStatus(200);
     }
@@ -47,9 +48,9 @@ class ContactUsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
         $this->json('POST', route('company.support.customer', ['id' => 1, 'user_id' => 1]))->assertStatus(302);
     }
@@ -59,7 +60,7 @@ class ContactUsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 1)->first();
 
         $this->actingAs($user, 'api');
 

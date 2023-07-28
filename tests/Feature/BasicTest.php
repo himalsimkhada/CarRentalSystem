@@ -34,7 +34,7 @@ class BasicTest extends TestCase
             'type' => 'Normal'
         ];
 
-        $this->json('POST', route('listing'), $data)->assertStatus(200);
+        $this->json('GET', route('listing'), $data)->assertStatus(200);
     }
 
     public function test_car_listing()

@@ -6,6 +6,7 @@ use App\Models\BookingType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class BookingTypeTest extends TestCase
@@ -23,7 +24,7 @@ class BookingTypeTest extends TestCase
 
         $this->actingAs($user, 'api');
 
-        $response = $this->get(route('admin.booking.types'));
+        $response = $this->get(route('admin.index.type'));
 
         $response->assertStatus(200);
     }
@@ -37,14 +38,14 @@ class BookingTypeTest extends TestCase
         $this->actingAs($user, 'api');
 
         $data = [
-            'name' => 'test',
+            'name' => 'Testing',
             'luggage_no' => 2,
             'people_no' => 4,
             'cost' => 300,
             'late_fee' => 2
         ];
 
-        $this->json('POST', route('admin.booking.type.add'), $data)->assertStatus(302);
+        $this->json('POST', route('admin.store.type'), $data)->assertStatus(302);
     }
 
     public function test_admin_edits_booking_types()
@@ -56,14 +57,14 @@ class BookingTypeTest extends TestCase
         $this->actingAs($user, 'api');
 
         $data = [
-            'name' => 'testss',
+            'name' => 'Testing123',
             'luggage_no' => 2,
             'people_no' => 4,
             'cost' => 300,
             'late_fee' => 2
         ];
 
-        $this->json('POST', route('admin.booking.type.edit', ['id' => 1]), $data)->assertStatus(302);
+        $this->json('POST', route('admin.update.type', ['id' => Crypt::encrypt(1)]), $data)->assertStatus(302);
     }
 
     public function test_admin_deletes_type()
@@ -74,6 +75,6 @@ class BookingTypeTest extends TestCase
 
         $this->actingAs($user, 'api');
 
-        $this->get(route('admin.booking.type.delete', ['id' => 6]))->assertStatus(302);
+        $this->get(route('admin.delete.type', ['id' => 6]))->assertStatus(200);
     }
 }

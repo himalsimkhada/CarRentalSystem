@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,24 +20,24 @@ class CredentialsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
-        $this->get(route('company.credential'))->assertStatus(200);
+        $this->get(route('company.index.credential'))->assertStatus(200);
     }
 
     public function test_company_adds_credentails()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
         $data = [
             'credential_name' => 'test',
-            'credetial_file' => UploadedFile::fake()->create('document.pdf'),
+            'file' => UploadedFile::fake()->create('document.pdf'),
             'image' => UploadedFile::fake()->image('fake.jpg'),
             'credential_id' => rand(0,10000),
             'company_id' => 1,
@@ -49,13 +50,13 @@ class CredentialsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
         $data = [
             'credential_name' => 'test',
-            'credetial_file' => UploadedFile::fake()->create('document.pdf'),
+            'file' => UploadedFile::fake()->create('document.pdf'),
             'image' => UploadedFile::fake()->image('fake.jpg'),
             'credential_id' => rand(0,10000),
             'company_id' => 1,
@@ -68,29 +69,29 @@ class CredentialsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 3)->first();
+        $company = Company::where('id', '=', 1)->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($company, 'company');
 
-        $this->json('GET', route('company.delete.credential', ['id' => 1]))->assertStatus(302);
+        $this->json('GET', route('company.delete.credential', ['id' => 1]))->assertStatus(200);
     }
 
     public function test_user_credentials_display_view()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
-        $this->get(route('user.credential'))->assertStatus(200);
+        $this->get(route('user.index.credential'))->assertStatus(200);
     }
 
     public function test_user_adds_credentails()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -109,7 +110,7 @@ class CredentialsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -128,10 +129,10 @@ class CredentialsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
-        $this->json('GET', route('user.delete.credential', ['id' => 2]))->assertStatus(302);
+        $this->json('GET', route('user.delete.credential', ['id' => 2]))->assertStatus(200);
     }
 }

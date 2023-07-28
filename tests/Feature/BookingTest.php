@@ -19,7 +19,7 @@ class BookingTest extends TestCase
    {
       $this->withoutExceptionHandling();
 
-      $user = User::where('id', '=', 5)->first();
+      $user = User::where('id', '=', 2)->first();
 
       $this->actingAs($user, 'api');
 
@@ -32,7 +32,7 @@ class BookingTest extends TestCase
          'payment' => 0,
          'booking_type_id' => 3,
          'car_id' => 1,
-         'user_id' => auth()->user()->id,
+         'user_id' => $user->id,
          'location_id' => 1
       ];
 
@@ -43,7 +43,7 @@ class BookingTest extends TestCase
    {
       $this->withoutExceptionHandling();
 
-      $user = User::where('id', '=', 5)->first();
+      $user = User::where('id', '=', 2)->first();
 
       $this->actingAs($user, 'api');
 
@@ -67,7 +67,7 @@ class BookingTest extends TestCase
    {
       $this->withoutExceptionHandling();
 
-      $user = User::where('id', '=', 5)->first();
+      $user = User::where('id', '=', 2)->first();
 
       $this->actingAs($user, 'api');
 
@@ -83,6 +83,6 @@ class BookingTest extends TestCase
          'booking_id' => 1,
       ];
 
-      $this->json('GET', route('payment.paid', ['car_id' => 1, 'booking_id_id' => 1]), $values)->assertStatus(302);
+      $this->json('GET', route('paypal.success.payment', ['id' => 2]), $values)->assertStatus(302);
    }
 }

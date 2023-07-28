@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -20,7 +21,7 @@ class UserTest extends TestCase
         $this->withoutExceptionHandling();
 
         $credential = [
-            'email' => 'himal@test.com',
+            'email' => 'user@test.com',
             'password' => 'user'
         ];
 
@@ -31,7 +32,7 @@ class UserTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -42,7 +43,7 @@ class UserTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -53,29 +54,29 @@ class UserTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
-        $this->get(route('user.reservation'))->assertStatus(200);
+        $this->get(route('user.index.booking'))->assertStatus(200);
     }
 
     public function test_user_can_view_edit_profile_page()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
-        $this->get(route('user.profile.edit'))->assertStatus(200);
+        $this->get(route('user.edit.profile', ['id'=> Crypt::encrypt($user->id)]))->assertStatus(200);
     }
 
     public function test_user_update_profile()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -87,14 +88,14 @@ class UserTest extends TestCase
             'username' => 'test12'
         ];
 
-        $this->json('POST', route('user.profile.edited'), $data)->assertStatus(302);
+        $this->json('POST', route('user.update.profile'), $data)->assertStatus(302);
     }
 
     public function test_user_upload_picture()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
@@ -102,14 +103,14 @@ class UserTest extends TestCase
             'profile_photo' => UploadedFile::fake()->image('test.jpg'),
         ];
 
-        $this->json('POST', route('user.profile.pic.edited'), $data)->assertStatus(302);
+        $this->json('POST', route('user.update.picture'), $data)->assertStatus(302);
     }
 
     public function test_change_password()
     {
         $this->withoutExceptionHandling();
 
-        $user = User::where('id', '=', 5)->first();
+        $user = User::where('id', '=', 2)->first();
 
         $this->actingAs($user, 'api');
 
