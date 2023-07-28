@@ -15,8 +15,7 @@
                         </div>
                         @foreach ($images as $image)
                             <div class="carousel-item">
-                                <img class="d-block w-100" src="{{ asset($image->image) }}"
-                                    alt="">
+                                <img class="d-block w-100" src="{{ asset($image->image) }}" alt="">
                             </div>
                         @endforeach
                     </div>
@@ -35,7 +34,7 @@
             </div>
             <div class="col-md-4">
                 <div>
-                    <h3 class="text-right">Details</h3>
+                    <h3 class="text-end">Details</h3>
                     <div class="card my-5" style="width: auto;">
                         <div class="card-body">
                             <h5 class="card-title">{{ $car->model }}</h5>
@@ -50,8 +49,8 @@
                             </ul>
                             <p class="pricing">Cost (Per Day): ${{ $car->bookingType->cost }}</p>
                             <div class="booking">
-                                <button type="button" class="btn btn-success form-control text-left" data-bs-toggle="modal"
-                                    data-bs-target="#bookingDialouge">Book<span
+                                <button type="button" class="btn btn-success form-control text-start"
+                                    data-bs-toggle="modal" data-bs-target="#bookingDialouge">Book<span
                                         class="material-icons float-end align-middle">
                                         payments
                                     </span></button>

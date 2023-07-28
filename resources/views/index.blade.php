@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="d-flex align-items-center justify-content-center">
-        <form action="{{ route('listing') }}" method="get" class="border rounded p-5 index-form needs-validation"
-            novalidate>
+        <form action="{{ route('listing') }}" method="get" class="border rounded p-5 index-form needs-validation" novalidate>
             @csrf
             <p class="h2 font-weight-bold">Search For Rental Car</p>
             <div class="mb-3">
@@ -68,7 +67,8 @@
                 @foreach ($deals as $list)
                     <div class="col h-100">
                         <div class="card" style="width: 100%; min-height: 100%">
-                            <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                            <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
+                                class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $list->model }}</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -78,7 +78,8 @@
                                     <li class="list-group-item">Brand: {{ $list->brand }}</li>
                                     <li class="list-group-item">Color: {{ $list->color }}</li>
                                     <li class="list-group-item">Capacity: {{ $list->bookingType->people_no }}</li>
-                                    <li class="list-group-item text-success">Cost(per day): ${{ $list->bookingType->cost }}</li>
+                                    <li class="list-group-item text-success">Cost(per day): ${{ $list->bookingType->cost }}
+                                    </li>
                                 </ul>
                                 <a href="{{ route('car.detail', ['car-id' => $list->id]) }}"
                                     class="btn btn-primary mt-3">View
@@ -100,7 +101,8 @@
                 @foreach ($pop_deals as $list)
                     <div class="col-sm-3 my-5">
                         <div class="card" style="width: 100%; min-height: 100%">
-                            <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}" class="card-img-top" alt="...">
+                            <img src="{{ file_exists(asset($list->primary_image)) ? asset($list->primary_image) : asset('images/car/images/default.png') }}"
+                                class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $list->model }} -- Booked({{ $list->count }})</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">{{ $list->model_year }}</h6>
@@ -110,7 +112,8 @@
                                     <li class="list-group-item">Brand: {{ $list->brand }}</li>
                                     <li class="list-group-item">Color: {{ $list->color }}</li>
                                     <li class="list-group-item">Capacity: {{ $list->bookingType->people_no }}</li>
-                                    <li class="list-group-item text-success">Cost(per day): ${{ $list->bookingType->cost }}</li>
+                                    <li class="list-group-item text-success">Cost(per day): ${{ $list->bookingType->cost }}
+                                    </li>
                                 </ul>
                                 <a href="{{ route('car.detail', ['car-id' => $list->id]) }}"
                                     class="btn btn-primary mt-3">View

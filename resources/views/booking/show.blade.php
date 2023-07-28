@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col border">
                         <div class="row">
-                            <h5 class="col text-left lead"><b>Reservation</b></h5>
+                            <h5 class="col text-start lead"><b>Reservation</b></h5>
                         </div>
                         <hr class="my-4">
                         <p class="lead">ID: {{ $booking->id }}</p>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="col border">
                         <div class="row">
-                            <h5 class="col text-left lead"><b>Customer</b></h5>
+                            <h5 class="col text-start lead"><b>Customer</b></h5>
                         </div>
                         <hr class="my-4">
                         <p class="lead">ID: {{ $booking->user->id }}</p>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="col border">
                         <div class="row">
-                            <h5 class="col text-left lead"><b>Car</b></h5>
+                            <h5 class="col text-start lead"><b>Car</b></h5>
                         </div>
                         <hr class="my-4">
                         <p class="lead">ID: {{ $booking->car->id }}</p>

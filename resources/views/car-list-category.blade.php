@@ -3,7 +3,7 @@
 @section('title', 'Car Lists')
 
 @section('content')
-    <ul class="list-inline text-right">
+    <ul class="list-inline text-end">
         <li class="list-inline-item">
             <div class="dropdown open drop-left">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-bs-toggle="dropdown"

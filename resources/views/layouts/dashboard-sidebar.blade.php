@@ -74,7 +74,7 @@
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <div class="btn-group"><button class="logout btn btn-danger text-left"
+                            <div class="btn-group"><button class="logout btn btn-danger text-start"
                                     type="submit">Logout</button>
                                 <button class="logout btn btn-danger"><span class="material-icons">
                                         logout
@@ -161,7 +161,7 @@
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <div class="btn-group"><button class="logout btn btn-danger text-left"
+                            <div class="btn-group"><button class="logout btn btn-danger text-start"
                                     type="submit">Logout</button>
                                 <button class="logout btn btn-danger"><span class="material-icons">
                                         logout
@@ -233,7 +233,7 @@
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <div class="btn-group"><button class="logout btn btn-danger text-left"
+                            <div class="btn-group"><button class="logout btn btn-danger text-start"
                                     type="submit">Logout</button>
                                 <button class="logout btn btn-danger"><span class="material-icons">
                                         logout
