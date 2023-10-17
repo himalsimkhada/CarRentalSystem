@@ -15,7 +15,7 @@
         "laravel-datatables-vite": "^0.5.2",
         "laravel-vite-plugin": "^0.7.5",
         "lodash": "^4.17.19",
-        "postcss": "^8.1.14",
+        "postcss": "^8.4.31",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.56.1",
         "sass-loader": "^8.0.0",
